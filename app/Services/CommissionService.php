@@ -95,13 +95,6 @@ class CommissionService
                     continue;
                 }
 
-                // CRITICAL: If upline is marketing member, STOP the commission chain
-                // Marketing members don't receive bonuses from their upline perspective
-                if ($uplineNetwork->is_marketing) {
-                    // Stop processing further uplines
-                    break;
-                }
-
                 // Credit commission to upline's wallet
                 try {
                     $this->walletService->credit(
@@ -120,6 +113,13 @@ class CommissionService
                     throw new Exception(
                         "Failed to credit commission to {$uplineMemberId} at level {$currentLevel}: " . $e->getMessage()
                     );
+                }
+
+                // CRITICAL: If upline is marketing member, STOP the commission chain AFTER paying them
+                // Marketing members receive bonuses from their downline but don't pass it up
+                if ($uplineNetwork->is_marketing) {
+                    // Stop processing further uplines
+                    break;
                 }
 
                 $currentLevel++;
