@@ -43,11 +43,11 @@ class CommissionService
      * When a new member registers:
      * - Get upline chain (max 8 levels)
      * - For each level, check commission_config
-     * - Skip members with is_marketing=true (they don't receive bonus from downline registrations)
-     * - Create wallet transaction for each eligible upline
+     * - Pay commission to upline members (including marketing members)
+     * - Stop chain after paying a marketing member (don't continue to their uplines)
      * 
-     * Important: is_marketing members STOP the commission chain going UP,
-     * but they DO receive commissions from their own downline
+     * Important: Marketing members RECEIVE commission from their downline,
+     * but STOP the commission chain from continuing upward to their uplines
      * 
      * @param string $newMemberId
      * @return void
