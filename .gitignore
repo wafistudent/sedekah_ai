@@ -16,3 +16,5 @@
 !/storage/logs/.gitignore
 .DS_Store
 Thumbs.db
+database/database.sqlite
+laravel
