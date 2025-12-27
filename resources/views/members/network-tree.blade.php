@@ -5,12 +5,12 @@
 @section('content')
 <div class="space-y-6" x-data="networkTreeComponent()">
     {{-- Page Header --}}
-    <div class="flex items-center justify-between">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-            <h1 class="text-2xl font-bold text-gray-900">Network Tree</h1>
+            <h1 class="text-xl font-bold text-gray-900 lg:text-2xl">Network Tree</h1>
             <p class="mt-1 text-sm text-gray-600">Your MLM network hierarchy</p>
         </div>
-        <a href="{{ route('pins.reedem') }}" class="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500">
+        <a href="{{ route('pins.reedem') }}" class="inline-flex items-center justify-center rounded-md bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-blue-500">
             <svg class="-ml-0.5 mr-1.5 h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"/>
             </svg>
@@ -19,7 +19,7 @@
     </div>
 
     {{-- Network Statistics --}}
-    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 sm:gap-6">
         <x-stats-card title="Total Downlines" :value="$totalDownlines" color="blue" />
         <x-stats-card title="Active Downlines" :value="$activeDownlines" color="green" />
         <x-stats-card title="Deepest Level" :value="$deepestLevel" color="purple" />
