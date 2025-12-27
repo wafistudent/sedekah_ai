@@ -14,15 +14,18 @@ Route::get('/', function () {
     return ['Laravel' => app()->version()];
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
+
+Route::get('/login', [\App\Http\Controllers\AuthController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [\App\Http\Controllers\AuthController::class, 'login'])->name('login.post');
+Route::post('/logout', [\App\Http\Controllers\AuthController::class, 'logout'])->name('logout');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    
     // Member routes
     Route::get('/members/network-tree', [MemberController::class, 'networkTree'])->name('members.network-tree');
     Route::get('/members/register', [MemberController::class, 'register'])->name('members.register');
-    
+
     // PIN routes
     Route::prefix('pins')->name('pins.')->group(function () {
         Route::get('/', [PinController::class, 'index'])->name('index');
@@ -31,21 +34,21 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/reedem', [PinController::class, 'reedem'])->name('reedem');
         Route::post('/reedem', [PinController::class, 'storeReedem'])->name('reedem.store');
     });
-    
+
     // Wallet routes
     Route::prefix('wallet')->name('wallet.')->group(function () {
         Route::get('/', [WalletController::class, 'index'])->name('index');
         Route::get('/withdrawal', [WalletController::class, 'withdrawal'])->name('withdrawal');
         Route::post('/withdrawal', [WalletController::class, 'storeWithdrawal'])->name('withdrawal.store');
     });
-    
+
     // Commission routes
     Route::get('/commissions', [CommissionController::class, 'index'])->name('commissions.index');
     Route::get('/commissions/summary', [CommissionController::class, 'summary'])->name('commissions.summary');
-    
+
     // My withdrawal requests
     Route::get('/withdrawals/my-requests', [WithdrawalController::class, 'myRequests'])->name('withdrawals.my-requests');
-    
+
     // Admin routes (with role middleware)
     Route::middleware(['role:admin'])->prefix('admin')->name('admin.')->group(function () {
         Route::get('/members', [AdminController::class, 'members'])->name('members');

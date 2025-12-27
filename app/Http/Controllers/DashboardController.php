@@ -7,6 +7,7 @@ use App\Models\Wallet;
 use App\Models\WalletTransaction;
 use App\Models\WithdrawalRequest;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 use Illuminate\View\View;
 
 /**
@@ -72,7 +73,7 @@ class DashboardController extends Controller
         $pinBalance = $user->pin_point;
         
         // Calculate commission earned
-        $totalCommission = WalletTransaction::where('user_id', $user->id)
+        $totalCommission = $user->wallet?->transactions()
             ->where('reference_type', 'commission')
             ->sum('amount');
         
@@ -92,10 +93,10 @@ class DashboardController extends Controller
             ->count();
         
         // Recent transactions
-        $recentTransactions = WalletTransaction::where('user_id', $user->id)
+        $recentTransactions = $user->wallet?->transactions()
             ->latest()
             ->take(10)
-            ->get();
+            ->get() ?? [];
 
         return view('dashboard.member', compact(
             'walletBalance',
