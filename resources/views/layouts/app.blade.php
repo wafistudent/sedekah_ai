@@ -14,8 +14,22 @@
     {{-- Vite Assets --}}
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="bg-gray-50 font-sans antialiased">
+<body class="bg-gray-50 font-sans antialiased" x-data="{ sidebarOpen: false }">
     <div class="min-h-screen">
+        {{-- Mobile Overlay --}}
+        <div 
+            x-show="sidebarOpen" 
+            @click="sidebarOpen = false" 
+            x-transition:enter="transition-opacity ease-linear duration-300"
+            x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100"
+            x-transition:leave="transition-opacity ease-linear duration-300"
+            x-transition:leave-start="opacity-100"
+            x-transition:leave-end="opacity-0"
+            class="fixed inset-0 z-30 bg-gray-900 bg-opacity-50 lg:hidden"
+            style="display: none;"
+        ></div>
+
         {{-- Sidebar --}}
         <x-sidebar />
 
@@ -23,7 +37,7 @@
         <x-header />
 
         {{-- Main Content --}}
-        <main class="ml-64 pt-16">
+        <main class="lg:ml-64 pt-16">
             <div class="p-4 sm:p-6 lg:p-8">
                 {{-- Flash Messages --}}
                 @if(session('success'))
