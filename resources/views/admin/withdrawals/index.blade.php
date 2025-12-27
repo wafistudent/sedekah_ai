@@ -54,7 +54,7 @@
                                         <button 
                                             type="submit"
                                             onclick="return confirm('Are you sure you want to approve this withdrawal request?')"
-                                            class="w-full sm:w-auto rounded bg-green-600 px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-green-500"
+                                            class="w-full sm:w-auto rounded bg-green-600 px-6 py-3 text-xs font-semibold text-white shadow-sm hover:bg-green-500"
                                         >
                                             Approve
                                         </button>
@@ -64,7 +64,7 @@
                                         <button 
                                             type="submit"
                                             onclick="return confirm('Are you sure you want to reject this withdrawal request?')"
-                                            class="w-full sm:w-auto rounded bg-red-600 px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-red-500"
+                                            class="w-full sm:w-auto rounded bg-red-600 px-6 py-3 text-xs font-semibold text-white shadow-sm hover:bg-red-500"
                                         >
                                             Reject
                                         </button>

@@ -26,8 +26,8 @@
             x-transition:leave="transition-opacity ease-linear duration-300"
             x-transition:leave-start="opacity-100"
             x-transition:leave-end="opacity-0"
+            x-cloak
             class="fixed inset-0 z-30 bg-gray-900 bg-opacity-50 lg:hidden"
-            style="display: none;"
         ></div>
 
         {{-- Sidebar --}}
