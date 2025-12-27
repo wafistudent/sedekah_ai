@@ -6,7 +6,7 @@
 <div class="space-y-6">
     {{-- Page Header --}}
     <div>
-        <h1 class="text-2xl font-bold text-gray-900">Pending Withdrawal Requests</h1>
+        <h1 class="text-xl font-bold text-gray-900 lg:text-2xl">Pending Withdrawal Requests</h1>
         <p class="mt-1 text-sm text-gray-600">Review and process member withdrawal requests</p>
     </div>
 
@@ -48,13 +48,13 @@
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-center text-sm">
-                                <div class="flex justify-center space-x-2">
+                                <div class="flex flex-col sm:flex-row justify-center gap-2">
                                     <form method="POST" action="{{ route('admin.withdrawals.approve', $withdrawal->id) }}" class="inline">
                                         @csrf
                                         <button 
                                             type="submit"
                                             onclick="return confirm('Are you sure you want to approve this withdrawal request?')"
-                                            class="rounded bg-green-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-green-500"
+                                            class="w-full sm:w-auto rounded bg-green-600 px-6 py-3 text-xs font-semibold text-white shadow-sm hover:bg-green-500"
                                         >
                                             Approve
                                         </button>
@@ -64,7 +64,7 @@
                                         <button 
                                             type="submit"
                                             onclick="return confirm('Are you sure you want to reject this withdrawal request?')"
-                                            class="rounded bg-red-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-red-500"
+                                            class="w-full sm:w-auto rounded bg-red-600 px-6 py-3 text-xs font-semibold text-white shadow-sm hover:bg-red-500"
                                         >
                                             Reject
                                         </button>

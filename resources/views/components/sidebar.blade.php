@@ -1,9 +1,22 @@
 {{-- Sidebar Navigation --}}
-<aside class="fixed left-0 top-0 z-40 h-screen w-64 border-r border-gray-200 bg-white transition-transform">
+<aside 
+    :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
+    class="fixed left-0 top-0 z-40 h-screen w-64 border-r border-gray-200 bg-white transition-transform duration-300 ease-in-out lg:translate-x-0"
+>
     <div class="flex h-full flex-col overflow-y-auto px-3 py-4">
-        {{-- Logo --}}
-        <div class="mb-10 flex items-center px-3">
+        {{-- Logo and Close Button --}}
+        <div class="mb-10 flex items-center justify-between px-3">
             <span class="text-2xl font-bold text-gray-900">Sedekah MLM</span>
+            {{-- Close button (mobile only) --}}
+            <button 
+                @click="sidebarOpen = false"
+                type="button"
+                class="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 lg:hidden"
+            >
+                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
         </div>
 
         {{-- Navigation Menu --}}

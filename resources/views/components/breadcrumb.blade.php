@@ -1,7 +1,7 @@
 @props(['items' => []])
 
-<nav class="flex" aria-label="Breadcrumb">
-    <ol class="inline-flex items-center space-x-1 md:space-x-3">
+<nav class="flex overflow-x-auto" aria-label="Breadcrumb">
+    <ol class="inline-flex items-center space-x-1 md:space-x-3 whitespace-nowrap">
         <li class="inline-flex items-center">
             <a href="{{ route('dashboard') }}" class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600">
                 <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">

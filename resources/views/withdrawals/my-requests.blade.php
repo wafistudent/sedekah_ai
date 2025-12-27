@@ -5,12 +5,12 @@
 @section('content')
 <div class="space-y-6">
     {{-- Page Header --}}
-    <div class="flex items-center justify-between">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-            <h1 class="text-2xl font-bold text-gray-900">My Withdrawal Requests</h1>
+            <h1 class="text-xl font-bold text-gray-900 lg:text-2xl">My Withdrawal Requests</h1>
             <p class="mt-1 text-sm text-gray-600">Track the status of your withdrawal requests</p>
         </div>
-        <a href="{{ route('wallet.withdrawal') }}" class="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500">
+        <a href="{{ route('wallet.withdrawal') }}" class="inline-flex items-center justify-center rounded-md bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-blue-500">
             <svg class="-ml-0.5 mr-1.5 h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"/>
             </svg>
