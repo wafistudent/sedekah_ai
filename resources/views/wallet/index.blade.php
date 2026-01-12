@@ -45,7 +45,7 @@
                     @forelse($transactions as $transaction)
                         <tr>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                {{ $transaction->created_at->format('d M Y, H:i') }}
+                                {{  \Carbon\Carbon::parse($transaction->created_at)->format('d M Y, H:i') }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <span class="inline-flex rounded-full px-2 py-1 text-xs font-semibold

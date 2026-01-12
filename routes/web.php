@@ -11,7 +11,7 @@ use App\Http\Controllers\WithdrawalController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return ['Laravel' => app()->version()];
+    return redirect()->route('dashboard');
 });
 
 require __DIR__ . '/auth.php';
@@ -34,6 +34,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/reedem', [PinController::class, 'reedem'])->name('reedem');
         Route::post('/reedem', [PinController::class, 'storeReedem'])->name('reedem.store');
     });
+
+    Route::get('/qr-depth', [PinController::class, 'testing']);
 
     // Wallet routes
     Route::prefix('wallet')->name('wallet.')->group(function () {

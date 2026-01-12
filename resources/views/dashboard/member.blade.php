@@ -98,7 +98,7 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-sm font-medium text-gray-900">{{ $transaction->description }}</p>
-                            <p class="text-xs text-gray-500">{{ $transaction->created_at->format('d M Y, H:i') }}</p>
+                            <p class="text-xs text-gray-500"> {{ \Carbon\Carbon::parse($transaction->created_at)->format('d M Y, H:i') }}</p>
                         </div>
                         <span class="text-sm font-medium {{ $transaction->amount >= 0 ? 'text-green-600' : 'text-red-600' }}">
                             {{ $transaction->amount >= 0 ? '+' : '' }}Rp {{ number_format($transaction->amount, 0, ',', '.') }}

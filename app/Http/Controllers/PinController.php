@@ -1,7 +1,7 @@
 <?php
-
 namespace App\Http\Controllers;
 
+use App\Http\Requests\NewUserRequest;
 use App\Models\PinTransaction;
 use App\Models\User;
 use App\Services\PinService;
@@ -9,14 +9,15 @@ use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\View\View;
 
 /**
  * PinController
- * 
+ *
  * Handles PIN operations including viewing history, transferring, and redeeming PINs
- * 
+ *
  * @package App\Http\Controllers
  */
 class PinController extends Controller
@@ -28,7 +29,7 @@ class PinController extends Controller
 
     /**
      * Constructor
-     * 
+     *
      * @param PinService $pinService
      */
     public function __construct(PinService $pinService)
@@ -38,7 +39,7 @@ class PinController extends Controller
 
     /**
      * Display PIN transaction history
-     * 
+     *
      * @return View
      */
     public function index(): View
@@ -52,23 +53,24 @@ class PinController extends Controller
 
     /**
      * Show transfer PIN form
-     * 
+     *
      * @return View
      */
     public function transfer(): View
     {
         $currentBalance = auth()->user()->pin_point;
-        $members = User::where('id', '!=', auth()->id())
+        $members        = User::where('id', '!=', auth()->id())
             ->where('status', 'active')
             ->select('id', 'name', 'email')
             ->get();
 
+        // Log::info($this->user()->name . 'berhasil log');
         return view('pins.transfer', compact('currentBalance', 'members'));
     }
 
     /**
      * Process PIN transfer
-     * 
+     *
      * @param Request $request
      * @return RedirectResponse
      */
@@ -76,7 +78,7 @@ class PinController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'recipient_id' => 'required|exists:users,id',
-            'amount' => 'required|integer|min:1',
+            'amount'       => 'required|integer|min:1',
         ]);
 
         if ($validator->fails()) {
@@ -103,20 +105,20 @@ class PinController extends Controller
 
     /**
      * Show redeem PIN form (register new member)
-     * 
+     *
      * @param Request $request
      * @return View
      */
     public function reedem(Request $request): View
     {
-        $upline = null;
+        $upline         = null;
         $currentBalance = auth()->user()->pin_point;
-        
+
         // Check if upline is specified in query parameter
         if ($request->has('upline')) {
             $upline = User::with('network')->find($request->upline);
         }
-        
+
         // Get available uplines
         $availableUplines = User::where('status', 'active')
             ->where('id', '!=', auth()->id())
@@ -128,39 +130,29 @@ class PinController extends Controller
 
     /**
      * Process PIN redemption (register new member)
-     * 
+     *
      * @param Request $request
      * @return RedirectResponse
      */
-    public function storeReedem(Request $request): RedirectResponse
+    public function storeReedem(NewUserRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            'username' => 'required|string|min:3|max:20|unique:users,id',
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'phone' => 'nullable|string|max:20',
-            'password' => 'required|string|min:8|confirmed',
-            'dana_name' => 'required|string|max:255',
-            'dana_number' => 'required|string|max:20',
-            'upline_id' => 'required|exists:users,id',
-            'is_marketing' => 'nullable|boolean',
-        ]);
+        // return response()->json($request);
 
-        if ($validator->fails()) {
+        if (! $request->validated()) {
             return redirect()->back()
-                ->withErrors($validator)
+                ->withErrors($request->errors())
                 ->withInput();
         }
 
         try {
             $newMemberData = [
-                'id' => $request->username,
-                'name' => $request->name,
-                'email' => $request->email,
-                'phone' => $request->phone,
-                'password' => $request->password,
-                'dana_name' => $request->dana_name,
-                'dana_number' => $request->dana_number,
+                'id'           => $request->username,
+                'name'         => $request->name,
+                'email'        => $request->email,
+                'phone'        => $request->phone,
+                'password'     => $request->password,
+                'dana_name'    => $request->dana_name,
+                'dana_number'  => $request->dana_number,
                 'is_marketing' => $request->boolean('is_marketing', false),
             ];
 
@@ -177,5 +169,26 @@ class PinController extends Controller
                 ->with('error', $e->getMessage())
                 ->withInput();
         }
+    }
+
+    public function testing()
+    {
+        $current = 'member2';
+        $network = [];
+
+        while ($current) {
+            $next = DB::table('network')
+                ->where('upline_id', $current)
+                ->first();
+
+            if (! $next) {
+                break;
+            }
+
+            $network[] = $next;
+            $current   = $next->member_id;
+        }
+
+        dd($network);
     }
 }
