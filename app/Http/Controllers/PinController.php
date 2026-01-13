@@ -64,7 +64,6 @@ class PinController extends Controller
             ->select('id', 'name', 'email')
             ->get();
 
-        // Log::info($this->user()->name . 'berhasil log');
         return view('pins.transfer', compact('currentBalance', 'members'));
     }
 

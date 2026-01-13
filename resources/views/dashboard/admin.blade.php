@@ -56,7 +56,7 @@
                                 <x-member-avatar :member="$member" size="sm" />
                                 <div>
                                     <p class="text-sm font-medium text-gray-900">{{ $member->name }}</p>
-                                    <p class="text-xs text-gray-500">@{{ $member->id }}</p>
+                                    <p class="text-xs text-gray-500">{{ $member->id }}</p>
                                 </div>
                             </div>
                             <span class="text-xs text-gray-500">{{ $member->created_at->diffForHumans() }}</span>

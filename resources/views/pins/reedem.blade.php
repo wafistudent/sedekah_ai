@@ -189,12 +189,12 @@
                 >
                     <option value="">Select an upline...</option>
                     @if($upline)
-                        <option value="{{ $upline->id }}" selected>{{ $upline->name }} (@{{ $upline->id }})</option>
+                        <option value="{{ $upline->id }}" selected>{{ $upline->name }} ({{ $upline->id }})</option>
                     @else
                         <option value="{{ auth()->id() }}" {{ old('upline_id') == auth()->id() ? 'selected' : '' }}>Myself ({{ auth()->user()->name }})</option>
                         @foreach($availableUplines as $availableUpline)
                             <option value="{{ $availableUpline->id }}" {{ old('upline_id') == $availableUpline->id ? 'selected' : '' }}>
-                                {{ $availableUpline->name }} (@{{ $availableUpline->id }})
+                                {{ $availableUpline->name }} ({{ $availableUpline->id }})
                             </option>
                         @endforeach
                     @endif
