@@ -19,7 +19,6 @@
 Thumbs.db
 database/database.sqlite
 laravel
-/public/build
 /public/hot
 npm-debug.log
 yarn-error.log
