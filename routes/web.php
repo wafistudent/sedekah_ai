@@ -1,8 +1,10 @@
 <?php
 
+use App\Http\Controllers\Admin\MaterialController as AdminMaterialController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CommissionController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\MaterialController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\PinController;
 use App\Http\Controllers\SettingController;
@@ -51,6 +53,11 @@ Route::middleware(['auth'])->group(function () {
     // My withdrawal requests
     Route::get('/withdrawals/my-requests', [WithdrawalController::class, 'myRequests'])->name('withdrawals.my-requests');
 
+    // Material routes (Member side)
+    Route::get('/materials', [MaterialController::class, 'index'])->name('materials.index');
+    Route::get('/materials/{id}', [MaterialController::class, 'show'])->name('materials.show');
+    Route::post('/materials/{id}/complete', [MaterialController::class, 'complete'])->name('materials.complete');
+
     // Admin routes (with role middleware)
     Route::middleware(['role:admin'])->prefix('admin')->name('admin.')->group(function () {
         Route::get('/members', [AdminController::class, 'members'])->name('members');
@@ -63,5 +70,8 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/settings/commission-config', [SettingController::class, 'updateCommissionConfig'])->name('settings.commission-config.update');
         Route::get('/settings/app-settings', [SettingController::class, 'appSettings'])->name('settings.app-settings');
         Route::post('/settings/app-settings', [SettingController::class, 'updateAppSettings'])->name('settings.app-settings.update');
+        
+        // Material management routes
+        Route::resource('materials', AdminMaterialController::class);
     });
 });
