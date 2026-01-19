@@ -3,15 +3,49 @@
 @tailwind utilities;
 
 [x-cloak] {
-    display: none !important;
+  display: none !important;
+}
+
+.dark {
+  all: unset !important;
 }
 
 /* Avatar color utilities */
-.avatar-blue { @apply bg-blue-500; }
-.avatar-green { @apply bg-green-500; }
-.avatar-purple { @apply bg-purple-500; }
-.avatar-orange { @apply bg-orange-500; }
-.avatar-red { @apply bg-red-500; }
-.avatar-indigo { @apply bg-indigo-500; }
-.avatar-teal { @apply bg-teal-500; }
-.avatar-pink { @apply bg-pink-500; }
+.avatar-blue {
+  @apply bg-blue-500;
+}
+.avatar-green {
+  @apply bg-green-500;
+}
+.avatar-purple {
+  @apply bg-purple-500;
+}
+.avatar-orange {
+  @apply bg-orange-500;
+}
+.avatar-red {
+  @apply bg-red-500;
+}
+.avatar-indigo {
+  @apply bg-indigo-500;
+}
+.avatar-teal {
+  @apply bg-teal-500;
+}
+.avatar-pink {
+  @apply bg-pink-500;
+}
+
+/* Scrollbar utilities for horizontal tables */
+@layer utilities {
+  .scrollbar-thin::-webkit-scrollbar {
+    height: 6px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: #cbd5e0;
+    border-radius: 3px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: #f7fafc;
+  }
+}

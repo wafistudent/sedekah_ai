@@ -6,12 +6,12 @@
 <div class="space-y-6">
     {{-- Page Header --}}
     <div>
-        <h1 class="text-2xl font-bold text-gray-900">Welcome, {{ auth()->user()->name }}!</h1>
+        <h1 class="text-xl font-bold text-gray-900 lg:text-2xl">Welcome, {{ auth()->user()->name }}!</h1>
         <p class="mt-1 text-sm text-gray-600">Your MLM dashboard and statistics</p>
     </div>
 
     {{-- Stats Cards --}}
-    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 sm:gap-6">
         <x-stats-card 
             title="Wallet Balance" 
             :value="'Rp ' . number_format($walletBalance, 0, ',', '.')" 
@@ -56,29 +56,29 @@
     </div>
 
     {{-- Quick Actions --}}
-    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        <a href="{{ route('members.network-tree') }}" class="block rounded-lg border-2 border-blue-200 bg-blue-50 p-6 text-center hover:bg-blue-100">
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 sm:gap-6">
+        <a href="{{ route('members.network-tree') }}" class="block rounded-lg border-2 border-blue-200 bg-blue-50 p-4 sm:p-6 text-center hover:bg-blue-100">
             <svg class="mx-auto h-8 w-8 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>
             </svg>
             <p class="mt-2 font-medium text-blue-900">Network Tree</p>
         </a>
 
-        <a href="{{ route('pins.reedem') }}" class="block rounded-lg border-2 border-green-200 bg-green-50 p-6 text-center hover:bg-green-100">
+        <a href="{{ route('pins.reedem') }}" class="block rounded-lg border-2 border-green-200 bg-green-50 p-4 sm:p-6 text-center hover:bg-green-100">
             <svg class="mx-auto h-8 w-8 text-green-600" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"/>
             </svg>
             <p class="mt-2 font-medium text-green-900">Register Member</p>
         </a>
 
-        <a href="{{ route('wallet.withdrawal') }}" class="block rounded-lg border-2 border-purple-200 bg-purple-50 p-6 text-center hover:bg-purple-100">
+        <a href="{{ route('wallet.withdrawal') }}" class="block rounded-lg border-2 border-purple-200 bg-purple-50 p-4 sm:p-6 text-center hover:bg-purple-100">
             <svg class="mx-auto h-8 w-8 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/>
             </svg>
             <p class="mt-2 font-medium text-purple-900">Withdraw</p>
         </a>
 
-        <a href="{{ route('pins.transfer') }}" class="block rounded-lg border-2 border-orange-200 bg-orange-50 p-6 text-center hover:bg-orange-100">
+        <a href="{{ route('pins.transfer') }}" class="block rounded-lg border-2 border-orange-200 bg-orange-50 p-4 sm:p-6 text-center hover:bg-orange-100">
             <svg class="mx-auto h-8 w-8 text-orange-600" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"/>
                 <path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd"/>
@@ -98,7 +98,7 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-sm font-medium text-gray-900">{{ $transaction->description }}</p>
-                            <p class="text-xs text-gray-500">{{ $transaction->created_at->format('d M Y, H:i') }}</p>
+                            <p class="text-xs text-gray-500"> {{ \Carbon\Carbon::parse($transaction->created_at)->format('d M Y, H:i') }}</p>
                         </div>
                         <span class="text-sm font-medium {{ $transaction->amount >= 0 ? 'text-green-600' : 'text-red-600' }}">
                             {{ $transaction->amount >= 0 ? '+' : '' }}Rp {{ number_format($transaction->amount, 0, ',', '.') }}

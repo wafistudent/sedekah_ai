@@ -5,16 +5,16 @@
 @section('content')
 <div class="space-y-6">
     {{-- Page Header --}}
-    <div class="flex items-center justify-between">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-            <h1 class="text-2xl font-bold text-gray-900">PIN Transaction History</h1>
+            <h1 class="text-xl font-bold text-gray-900 lg:text-2xl">PIN Transaction History</h1>
             <p class="mt-1 text-sm text-gray-600">View all your PIN transactions</p>
         </div>
-        <div class="flex space-x-3">
-            <a href="{{ route('pins.transfer') }}" class="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500">
+        <div class="flex flex-col sm:flex-row gap-3">
+            <a href="{{ route('pins.transfer') }}" class="inline-flex items-center justify-center rounded-md bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-blue-500">
                 Transfer PIN
             </a>
-            <a href="{{ route('pins.reedem') }}" class="inline-flex items-center rounded-md bg-green-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500">
+            <a href="{{ route('pins.reedem') }}" class="inline-flex items-center justify-center rounded-md bg-green-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-green-500">
                 Redeem PIN
             </a>
         </div>
@@ -44,7 +44,7 @@
                     <tr>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Target/From</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Target</th>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
                         <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Points</th>
                         <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Balance</th>
@@ -67,7 +67,7 @@
                                 </span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                {{ $transaction->target_id ? '@' . $transaction->target_id : '-' }}
+                                {{ $transaction->target_id ? $transaction->target_id : '-' }}
                             </td>
                             <td class="px-6 py-4 text-sm text-gray-900">
                                 {{ $transaction->description }}

@@ -5,12 +5,12 @@
 @section('content')
 <div class="space-y-6" x-data="networkTreeComponent()">
     {{-- Page Header --}}
-    <div class="flex items-center justify-between">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-            <h1 class="text-2xl font-bold text-gray-900">Network Tree</h1>
+            <h1 class="text-xl font-bold text-gray-900 lg:text-2xl">Network Tree</h1>
             <p class="mt-1 text-sm text-gray-600">Your MLM network hierarchy</p>
         </div>
-        <a href="{{ route('pins.reedem') }}" class="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500">
+        <a href="{{ route('pins.reedem') }}" class="inline-flex items-center justify-center rounded-md bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-blue-500">
             <svg class="-ml-0.5 mr-1.5 h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"/>
             </svg>
@@ -19,11 +19,10 @@
     </div>
 
     {{-- Network Statistics --}}
-    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-1 lg:grid-cols-3 sm:gap-6">
         <x-stats-card title="Total Downlines" :value="$totalDownlines" color="blue" />
         <x-stats-card title="Active Downlines" :value="$activeDownlines" color="green" />
         <x-stats-card title="Deepest Level" :value="$deepestLevel" color="purple" />
-        <x-stats-card title="Available Slots" :value="$availableSlots" color="orange" />
     </div>
 
     {{-- Network Tree Table --}}
@@ -62,12 +61,12 @@
                                             <div class="flex items-center space-x-2 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2">
                                                 <x-member-avatar :member="$member" size="sm" />
                                                 <div class="min-w-0 flex-1">
-                                                    <p class="truncate text-sm font-medium text-gray-900">{{ $member->name }}</p>
-                                                    <p class="truncate text-xs text-gray-500">@{{ $member->id }}</p>
+                                                    <p class="truncate text-sm font-medium text-gray-900">{{ $member[0]->id }}</p>
+                                                    <p class="truncate text-xs text-gray-500">Upline: {{ $member[1]->id }}</p>
                                                 </div>
                                                 <div class="flex space-x-1">
-                                                    <button 
-                                                        @click="showMemberDetail('{{ $member->id }}')"
+                                                    {{-- <button 
+                                                        @click="showMemberDetail('{{ $member[0]->id }}')"
                                                         class="rounded p-1 text-blue-600 hover:bg-blue-100"
                                                         title="View Details"
                                                     >
@@ -75,10 +74,10 @@
                                                             <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
                                                             <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/>
                                                         </svg>
-                                                    </button>
+                                                    </button> --}}
                                                     @if($level < 8)
                                                         <a 
-                                                            href="{{ route('pins.reedem', ['upline' => $member->id]) }}"
+                                                            href="{{ route('pins.reedem', ['upline' => $member[0]->id]) }}"
                                                             class="rounded p-1 text-green-600 hover:bg-green-100"
                                                             title="Add Member Under"
                                                         >

@@ -6,7 +6,7 @@
 <div class="mx-auto max-w-2xl space-y-6">
     {{-- Page Header --}}
     <div>
-        <h1 class="text-2xl font-bold text-gray-900">Transfer PIN</h1>
+        <h1 class="text-xl font-bold text-gray-900 lg:text-2xl">Transfer PIN</h1>
         <p class="mt-1 text-sm text-gray-600">Transfer PIN points to another member</p>
     </div>
 
@@ -37,12 +37,12 @@
                 name="recipient_id" 
                 id="recipient_id" 
                 required
-                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-base"
             >
                 <option value="">Select a recipient...</option>
                 @foreach($members as $member)
                     <option value="{{ $member->id }}" {{ old('recipient_id') == $member->id ? 'selected' : '' }}>
-                        {{ $member->name }} (@{{ $member->id }}) - {{ $member->email }}
+                        {{ $member->name }} ({{ $member->id }}) - {{ $member->email }}
                     </option>
                 @endforeach
             </select>
@@ -60,7 +60,7 @@
                 min="1"
                 max="{{ $currentBalance }}"
                 required
-                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-base"
                 value="{{ old('amount') }}"
             >
             <p class="mt-1 text-sm text-gray-500">Maximum: {{ $currentBalance }} PIN</p>
@@ -70,13 +70,13 @@
         </div>
 
         {{-- Actions --}}
-        <div class="flex justify-end space-x-3">
-            <a href="{{ route('pins.index') }}" class="rounded-md bg-white px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+        <div class="flex flex-col sm:flex-row justify-end gap-3">
+            <a href="{{ route('pins.index') }}" class="inline-flex items-center justify-center rounded-md bg-white px-6 py-3 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
                 Cancel
             </a>
             <button 
                 type="submit" 
-                class="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500"
+                class="inline-flex items-center justify-center rounded-md bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-blue-500"
             >
                 Transfer PIN
             </button>

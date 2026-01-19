@@ -84,7 +84,8 @@ class WalletService
             $wallet = Wallet::where('user_id', $userId)->lockForUpdate()->first();
 
             if (!$wallet) {
-                throw new Exception("Wallet not found for user {$userId}");
+                $this->createWallet($userId);
+                $wallet = Wallet::where('user_id', $userId)->lockForUpdate()->first();
             }
 
             $balanceBefore = $wallet->balance;

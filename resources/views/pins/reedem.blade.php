@@ -6,7 +6,7 @@
 <div class="mx-auto max-w-3xl space-y-6" x-data="registerMemberForm()">
     {{-- Page Header --}}
     <div>
-        <h1 class="text-2xl font-bold text-gray-900">Register New Member</h1>
+        <h1 class="text-xl font-bold text-gray-900 lg:text-2xl">Register New Member</h1>
         <p class="mt-1 text-sm text-gray-600">Redeem 1 PIN to register a new member to your network</p>
     </div>
 
@@ -49,7 +49,7 @@
                     required
                     minlength="3"
                     maxlength="20"
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-base"
                     value="{{ old('username') }}"
                 >
                 <p x-show="errors.username" x-text="errors.username" class="mt-1 text-sm text-red-600"></p>
@@ -65,7 +65,7 @@
                     name="name" 
                     id="name" 
                     required
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-base"
                     value="{{ old('name') }}"
                 >
                 @error('name')
@@ -82,7 +82,7 @@
                     x-model="form.email"
                     @blur="validateEmail"
                     required
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-base"
                     value="{{ old('email') }}"
                 >
                 <p x-show="errors.email" x-text="errors.email" class="mt-1 text-sm text-red-600"></p>
@@ -94,10 +94,10 @@
             <div>
                 <label for="phone" class="block text-sm font-medium text-gray-700">Phone</label>
                 <input 
-                    type="text" 
+                    type="number" 
                     name="phone" 
                     id="phone" 
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-base"
                     value="{{ old('phone') }}"
                 >
                 @error('phone')
@@ -115,7 +115,7 @@
                     @blur="validatePassword"
                     required
                     minlength="8"
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-base"
                 >
                 <p x-show="errors.password" x-text="errors.password" class="mt-1 text-sm text-red-600"></p>
                 @error('password')
@@ -131,7 +131,7 @@
                     id="password_confirmation" 
                     required
                     minlength="8"
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-base"
                 >
                 @error('password_confirmation')
                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -150,7 +150,7 @@
                     name="dana_name" 
                     id="dana_name" 
                     required
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-base"
                     value="{{ old('dana_name') }}"
                 >
                 @error('dana_name')
@@ -165,7 +165,7 @@
                     name="dana_number" 
                     id="dana_number" 
                     required
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-base"
                     value="{{ old('dana_number') }}"
                 >
                 @error('dana_number')
@@ -184,17 +184,17 @@
                     name="upline_id" 
                     id="upline_id" 
                     required
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-base"
                     @if($upline) disabled @endif
                 >
                     <option value="">Select an upline...</option>
                     @if($upline)
-                        <option value="{{ $upline->id }}" selected>{{ $upline->name }} (@{{ $upline->id }})</option>
+                        <option value="{{ $upline->id }}" selected>{{ $upline->name }} ({{ $upline->id }})</option>
                     @else
                         <option value="{{ auth()->id() }}" {{ old('upline_id') == auth()->id() ? 'selected' : '' }}>Myself ({{ auth()->user()->name }})</option>
                         @foreach($availableUplines as $availableUpline)
                             <option value="{{ $availableUpline->id }}" {{ old('upline_id') == $availableUpline->id ? 'selected' : '' }}>
-                                {{ $availableUpline->name }} (@{{ $availableUpline->id }})
+                                {{ $availableUpline->name }} ({{ $availableUpline->id }})
                             </option>
                         @endforeach
                     @endif
@@ -224,14 +224,14 @@
         </div>
 
         {{-- Actions --}}
-        <div class="flex justify-end space-x-3 border-t pt-6">
-            <a href="{{ route('members.network-tree') }}" class="rounded-md bg-white px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+        <div class="flex flex-col sm:flex-row justify-end gap-3 border-t pt-6">
+            <a href="{{ route('members.network-tree') }}" class="inline-flex items-center justify-center rounded-md bg-white px-6 py-3 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
                 Cancel
             </a>
             <button 
                 type="submit" 
                 :disabled="hasErrors() || {{ $currentBalance }} < 1"
-                class="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                class="inline-flex items-center justify-center rounded-md bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
             >
                 Register Member (1 PIN)
             </button>

@@ -6,12 +6,12 @@
 <div class="space-y-6">
     {{-- Page Header --}}
     <div>
-        <h1 class="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
+        <h1 class="text-xl font-bold text-gray-900 lg:text-2xl">Admin Dashboard</h1>
         <p class="mt-1 text-sm text-gray-600">System overview and recent activities</p>
     </div>
 
     {{-- Stats Cards --}}
-    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 sm:gap-6">
         <x-stats-card 
             title="Total Members" 
             :value="$totalMembers" 
@@ -42,7 +42,7 @@
     </div>
 
     {{-- Recent Members and Transactions --}}
-    <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+    <div class="grid grid-cols-1 gap-4 lg:grid-cols-2 sm:gap-6">
         {{-- Recent Members --}}
         <div class="bg-white rounded-lg shadow">
             <div class="border-b border-gray-200 px-6 py-4">
@@ -56,7 +56,7 @@
                                 <x-member-avatar :member="$member" size="sm" />
                                 <div>
                                     <p class="text-sm font-medium text-gray-900">{{ $member->name }}</p>
-                                    <p class="text-xs text-gray-500">@{{ $member->id }}</p>
+                                    <p class="text-xs text-gray-500">{{ $member->id }}</p>
                                 </div>
                             </div>
                             <span class="text-xs text-gray-500">{{ $member->created_at->diffForHumans() }}</span>

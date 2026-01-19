@@ -6,7 +6,7 @@
 <div class="mx-auto max-w-4xl space-y-6">
     {{-- Page Header --}}
     <div>
-        <h1 class="text-2xl font-bold text-gray-900">Commission Configuration</h1>
+        <h1 class="text-xl font-bold text-gray-900 lg:text-2xl">Commission Configuration</h1>
         <p class="mt-1 text-sm text-gray-600">Configure commission amounts for each of the 8 network levels</p>
     </div>
 
@@ -29,7 +29,7 @@
                             </div>
                         </div>
 
-                        <div class="flex-1 grid grid-cols-2 gap-4">
+                        <div class="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <input type="hidden" name="levels[{{ $index }}][level]" value="{{ $level->level }}">
                             
                             <div>
@@ -43,7 +43,7 @@
                                     min="0"
                                     step="1000"
                                     value="{{ old("levels.{$index}.amount", $level->amount) }}"
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-base"
                                 >
                             </div>
 
@@ -86,13 +86,13 @@
                 </div>
             @endif
 
-            <div class="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end space-x-3">
-                <a href="{{ route('dashboard') }}" class="rounded-md bg-white px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+            <div class="px-6 py-4 bg-gray-50 border-t border-gray-200 flex flex-col sm:flex-row justify-end gap-3">
+                <a href="{{ route('dashboard') }}" class="inline-flex items-center justify-center rounded-md bg-white px-6 py-3 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
                     Cancel
                 </a>
                 <button 
                     type="submit" 
-                    class="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500"
+                    class="inline-flex items-center justify-center rounded-md bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-blue-500"
                 >
                     Save Configuration
                 </button>
