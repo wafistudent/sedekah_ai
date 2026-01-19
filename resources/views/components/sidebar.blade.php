@@ -119,6 +119,19 @@
                 </a>
             </li>
 
+            {{-- Learning Materials (Members Only) --}}
+            @if(!auth()->user()->hasRole('admin'))
+                <li>
+                    <a href="{{ route('materials.index') }}"
+                        class="flex items-center rounded-lg px-3 py-2.5 text-gray-900 hover:bg-gray-100 {{ request()->routeIs('materials.*') && !request()->routeIs('admin.materials.*') ? 'bg-gray-100' : '' }}">
+                        <svg class="h-5 w-5 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z"/>
+                        </svg>
+                        <span class="ml-3">Sumber Belajar</span>
+                    </a>
+                </li>
+            @endif
+
             {{-- Admin Menu --}}
             @can('role:admin')
                 <li class="pt-4 mt-4 border-t border-gray-200">
@@ -158,6 +171,16 @@
                                 clip-rule="evenodd" />
                         </svg>
                         <span class="ml-3">Withdrawals</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{{ route('admin.materials.index') }}"
+                        class="flex items-center rounded-lg px-3 py-2.5 text-gray-900 hover:bg-gray-100 {{ request()->routeIs('admin.materials.*') ? 'bg-gray-100' : '' }}">
+                        <svg class="h-5 w-5 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z"/>
+                        </svg>
+                        <span class="ml-3">Manage Materials</span>
                     </a>
                 </li>
 
