@@ -44,19 +44,26 @@ class CommissionController extends Controller
      */
     public function summary(): View
     {
-        // Total commission for the card display
-        $totalCommission = WalletTransaction::where('user_id', auth()->id())
-            ->where('reference_type', 'commission')
-            ->sum('amount');
+        $wallet = auth()->user()->wallet;
+        
+        if (!$wallet) {
+            $totalCommission = 0;
+            $commissionsByLevel = collect([]);
+        } else {
+            // Total commission for the card display
+            $totalCommission = WalletTransaction::where('wallet_id', $wallet->id)
+                ->where('reference_type', 'commission')
+                ->sum('amount');
 
-        // Get commission data for the level cards
-        $commissionsByLevel = WalletTransaction::where('user_id', auth()->id())
-            ->where('reference_type', 'commission')
-            ->select('level', DB::raw('SUM(amount) as total'), DB::raw('COUNT(*) as count'))
-            ->whereNotNull('level')
-            ->groupBy('level')
-            ->orderBy('level')
-            ->get();
+            // Get commission data for the level cards
+            $commissionsByLevel = WalletTransaction::where('wallet_id', $wallet->id)
+                ->where('reference_type', 'commission')
+                ->select('level', DB::raw('SUM(amount) as total'), DB::raw('COUNT(*) as count'))
+                ->whereNotNull('level')
+                ->groupBy('level')
+                ->orderBy('level')
+                ->get();
+        }
 
         return view('commissions.summary', compact('commissionsByLevel', 'totalCommission'));
     }

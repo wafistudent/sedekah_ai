@@ -21,25 +21,16 @@ new class extends Component
     #[Url]
     public int $perPage = 25;
 
-    /**
-     * Reset pagination when search changes
-     */
     public function updatingSearch(): void
     {
         $this->resetPage();
     }
 
-    /**
-     * Reset pagination when perPage changes
-     */
     public function updatingPerPage(): void
     {
         $this->resetPage();
     }
 
-    /**
-     * Sort by the given field
-     */
     public function sortBy(string $field): void
     {
         if ($this->sortField === $field) {
@@ -50,23 +41,23 @@ new class extends Component
         }
     }
 
-    /**
-     * Clear search
-     */
     public function clearSearch(): void
     {
         $this->search = '';
         $this->resetPage();
     }
 
-    /**
-     * Get transactions with filters
-     */
     public function getTransactionsProperty()
     {
-        $query = WalletTransaction::where('user_id', auth()->id());
+        $user = auth()->user();
+        $wallet = $user->wallet;
+        
+        if (!$wallet) {
+            return collect([]);
+        }
 
-        // Apply search filter
+        $query = WalletTransaction::where('wallet_id', $wallet->id);
+
         if ($this->search) {
             $query->where(function ($q) {
                 $q->where('description', 'like', '%' . $this->search . '%')
@@ -74,15 +65,11 @@ new class extends Component
             });
         }
 
-        // Apply sorting
         $query->orderBy($this->sortField, $this->sortDirection);
 
         return $query->paginate($this->perPage);
     }
 
-    /**
-     * Render the component
-     */
     public function render()
     {
         return view('components.tables.⚡wallet-transactions-table', [
@@ -93,7 +80,6 @@ new class extends Component
 ?>
 
 <div class="bg-white rounded-lg shadow overflow-hidden">
-    {{-- Search and Controls --}}
     <div class="px-6 py-4 border-b border-gray-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div class="relative flex-1 max-w-md">
             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -135,16 +121,11 @@ new class extends Component
         </div>
     </div>
 
-    {{-- Table --}}
-    <div class="overflow-x-auto" wire:loading.class="opacity-50">
+    <div class="overflow-x-auto relative" wire:loading.class="opacity-50">
         <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
                 <tr>
-                    <th 
-                        wire:click="sortBy('created_at')" 
-                        scope="col" 
-                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 select-none"
-                    >
+                    <th wire:click="sortBy('created_at')" scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 select-none">
                         <div class="flex items-center gap-1">
                             Date
                             @if($sortField === 'created_at')
@@ -160,11 +141,7 @@ new class extends Component
                     </th>
                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
-                    <th 
-                        wire:click="sortBy('amount')" 
-                        scope="col" 
-                        class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 select-none"
-                    >
+                    <th wire:click="sortBy('amount')" scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 select-none">
                         <div class="flex items-center justify-end gap-1">
                             Amount
                             @if($sortField === 'amount')
@@ -178,14 +155,10 @@ new class extends Component
                             @endif
                         </div>
                     </th>
-                    <th 
-                        wire:click="sortBy('after_balance')" 
-                        scope="col" 
-                        class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 select-none"
-                    >
+                    <th wire:click="sortBy('balance_after')" scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 select-none">
                         <div class="flex items-center justify-end gap-1">
                             Balance
-                            @if($sortField === 'after_balance')
+                            @if($sortField === 'balance_after')
                                 <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
                                     @if($sortDirection === 'asc')
                                         <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
@@ -202,7 +175,7 @@ new class extends Component
                 @forelse($transactions as $transaction)
                     <tr class="hover:bg-gray-50 transition-colors">
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                            {{  \Carbon\Carbon::parse($transaction->created_at)->format('d M Y, H:i') }}
+                            {{ \Carbon\Carbon::parse($transaction->created_at)->format('d M Y, H:i') }}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <span class="inline-flex rounded-full px-2 py-1 text-xs font-semibold
@@ -215,15 +188,15 @@ new class extends Component
                             </span>
                         </td>
                         <td class="px-6 py-4 text-sm text-gray-900">
-                            {{ $transaction->description }}
+                            {{ $transaction->description ?? '-' }}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium
-                            {{ $transaction->amount >= 0 ? 'text-green-600' : 'text-red-600' }}
+                            {{ $transaction->type === 'credit' ? 'text-green-600' : 'text-red-600' }}
                         ">
-                            {{ $transaction->amount >= 0 ? '+' : '' }}Rp {{ number_format($transaction->amount, 0, ',', '.') }}
+                            {{ $transaction->type === 'credit' ? '+' : '-' }}Rp {{ number_format(abs($transaction->amount), 0, ',', '.') }}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm text-gray-900">
-                            Rp {{ number_format($transaction->after_balance, 0, ',', '.') }}
+                            Rp {{ number_format($transaction->balance_after, 0, ',', '.') }}
                         </td>
                     </tr>
                 @empty
@@ -243,20 +216,18 @@ new class extends Component
                 @endforelse
             </tbody>
         </table>
-    </div>
-
-    {{-- Loading Indicator --}}
-    <div wire:loading class="absolute inset-0 bg-white bg-opacity-50 flex items-center justify-center">
-        <div class="flex items-center gap-2 text-blue-600">
-            <svg class="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-            <span class="text-sm font-medium">Loading...</span>
+        
+        <div wire:loading class="absolute inset-0 bg-white bg-opacity-50 flex items-center justify-center">
+            <div class="flex items-center gap-2 text-blue-600">
+                <svg class="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span class="text-sm font-medium">Loading...</span>
+            </div>
         </div>
     </div>
 
-    {{-- Pagination --}}
     @if($transactions->hasPages())
         <div class="border-t border-gray-200 px-6 py-4">
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">

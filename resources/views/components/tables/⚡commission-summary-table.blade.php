@@ -50,18 +50,23 @@ new class extends Component
 
     public function getCommissionsProperty()
     {
-        $query = WalletTransaction::where('user_id', auth()->id())
+        $user = auth()->user();
+        $wallet = $user->wallet;
+        
+        if (!$wallet) {
+            return collect([]);
+        }
+
+        $query = WalletTransaction::where('wallet_id', $wallet->id)
             ->where('reference_type', 'commission')
             ->select('level', DB::raw('SUM(amount) as total'), DB::raw('COUNT(*) as count'))
             ->whereNotNull('level')
             ->groupBy('level');
 
-        // Apply search filter (search by level number)
         if ($this->search) {
             $query->havingRaw('level LIKE ?', ['%' . $this->search . '%']);
         }
 
-        // Apply sorting
         $query->orderBy($this->sortField, $this->sortDirection);
 
         return $query->paginate($this->perPage);
@@ -69,14 +74,28 @@ new class extends Component
 
     public function getTotalCommissionProperty()
     {
-        return WalletTransaction::where('user_id', auth()->id())
+        $user = auth()->user();
+        $wallet = $user->wallet;
+        
+        if (!$wallet) {
+            return 0;
+        }
+
+        return WalletTransaction::where('wallet_id', $wallet->id)
             ->where('reference_type', 'commission')
             ->sum('amount');
     }
 
     public function getTotalTransactionsProperty()
     {
-        return WalletTransaction::where('user_id', auth()->id())
+        $user = auth()->user();
+        $wallet = $user->wallet;
+        
+        if (!$wallet) {
+            return 0;
+        }
+
+        return WalletTransaction::where('wallet_id', $wallet->id)
             ->where('reference_type', 'commission')
             ->whereNotNull('level')
             ->count();
