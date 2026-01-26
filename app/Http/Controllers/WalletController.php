@@ -46,14 +46,8 @@ class WalletController extends Controller
     {
         $user = auth()->user();
         $balance = $this->walletService->getBalance($user->id);
-        
-        // $transactions = WalletTransaction::where('user_id', $user->id)
-        //     ->latest()
-        //     ->paginate(20);
 
-        $transactions = $user->wallet->transactions()->latest()->paginate(20);
-        // var_dump($transactions);
-        return view('wallet.index', compact('balance', 'transactions'));
+        return view('wallet.index', compact('balance'));
     }
 
     /**

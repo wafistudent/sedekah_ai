@@ -44,11 +44,7 @@ class PinController extends Controller
      */
     public function index(): View
     {
-        $transactions = PinTransaction::where('member_id', auth()->id())
-            ->latest()
-            ->paginate(20);
-
-        return view('pins.index', compact('transactions'));
+        return view('pins.index');
     }
 
     /**
