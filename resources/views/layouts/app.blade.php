@@ -13,6 +13,9 @@
 
     {{-- Vite Assets --}}
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    
+    {{-- Livewire Styles --}}
+    @livewireStyles
 </head>
 <body class="bg-gray-50 font-sans antialiased" x-data="{ sidebarOpen: false }">
     <div class="min-h-screen">
@@ -72,5 +75,8 @@
 
     {{-- Additional Scripts --}}
     @stack('scripts')
+    
+    {{-- Livewire Scripts --}}
+    @livewireScripts
 </body>
 </html>
