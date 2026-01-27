@@ -1,12 +1,12 @@
 export default {
-  content: ['./resources/**/*.blade.php', './resources/**/*.js'],
-  theme: {
-    extend: {
-      fontFamily: {
-        sans: ['Inter', 'ui-sans-serif', 'system-ui'],
-        display: ['Poppins', 'sans-serif'],
-      },
+    content: [
+        "./resources/**/*.blade.php",
+        "./resources/**/*.js",
+    ],
+    theme: {
+        extend: {},
     },
-  },
-  plugins: [require('@tailwindcss/forms')],
-};
+    plugins: [
+        require('@tailwindcss/forms'),
+    ],
+}
