@@ -30,7 +30,7 @@
         <div class="mb-4">
             <h3 class="text-lg font-medium text-gray-900">Transaction History</h3>
         </div>
-        <livewire:tables.⚡wallet-transactions-table />
+        <livewire:tables.wallet-transactions-table />
     </div>
 </div>
 @endsection
