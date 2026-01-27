@@ -34,7 +34,11 @@
         ></div>
 
         {{-- Sidebar --}}
-        <x-sidebar />
+        @if (auth()->user()->role == 'admin')
+            <x-sidebar-admin />
+        @else
+            <x-sidebar-member />
+        @endif
 
         {{-- Header --}}
         <x-header />
