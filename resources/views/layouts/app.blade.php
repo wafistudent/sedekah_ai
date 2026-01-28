@@ -36,8 +36,8 @@
         {{-- Sidebar --}}
         @if (auth()->user()->hasRole('admin'))
             <x-sidebar.sidebar-admin />
-        {{-- @else
-            <x-sidebar.sidebar-member /> --}}
+        @else
+            <x-sidebar.sidebar-member />
         @endif
 
         {{-- Header --}}
