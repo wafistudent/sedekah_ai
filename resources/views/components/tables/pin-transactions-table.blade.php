@@ -66,7 +66,7 @@ new class extends Component
 
     public function render()
     {
-        return view('components.tables.⚡pin-transactions-table', [
+        return view('components.tables.pin-transactions-table', [
             'transactions' => $this->transactions,
         ]);
     }

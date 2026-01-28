@@ -34,10 +34,10 @@
         ></div>
 
         {{-- Sidebar --}}
-        @if (auth()->user()->role == 'admin')
-            <x-sidebar-admin />
+        @if (auth()->user()->hasRole('admin'))
+            <x-sidebar.sidebar-admin />
         @else
-            <x-sidebar-member />
+            <x-sidebar.sidebar-member />
         @endif
 
         {{-- Header --}}

@@ -37,6 +37,6 @@
     </div>
 
     {{-- Transactions Table --}}
-    <livewire:tables.⚡pin-transactions-table />
+    <livewire:tables.pin-transactions-table />
 </div>
 @endsection

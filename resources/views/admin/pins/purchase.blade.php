@@ -25,7 +25,7 @@
                 <option value="">Select a member...</option>
                 @foreach($members as $member)
                     <option value="{{ $member->id }}" {{ old('member_id') == $member->id ? 'selected' : '' }}>
-                        {{ $member->name }} (@{{ $member->id }}) - {{ $member->email }}
+                        {{ $member->name }} ({{ $member->id }}) - {{ $member->email }}
                     </option>
                 @endforeach
             </select>
