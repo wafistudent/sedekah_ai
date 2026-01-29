@@ -104,23 +104,16 @@ class PinController extends Controller
      * @param Request $request
      * @return View
      */
-    public function reedem(Request $request): View
+    public function reedem(Request $request)
     {
-        $upline         = null;
         $currentBalance = auth()->user()->pin_point;
-
-        // Check if upline is specified in query parameter
-        if ($request->has('upline')) {
-            $upline = User::with('network')->find($request->upline);
+        $upline = User::with('network')->find($request->upline);
+        
+        if ($upline) {
+            return view('pins.reedem', compact('upline', 'currentBalance'));
+        } else {
+            return redirect()->route('members.network-tree');
         }
-
-        // Get available uplines
-        $availableUplines = User::where('status', 'active')
-            ->where('id', '!=', auth()->id())
-            ->select('id', 'name', 'email')
-            ->get();
-
-        return view('pins.reedem', compact('upline', 'availableUplines', 'currentBalance'));
     }
 
     /**
@@ -158,7 +151,7 @@ class PinController extends Controller
             );
 
             return redirect()->route('members.network-tree')
-                ->with('success', "Member {$newUser->id} registered successfully");
+                ->with('success', "Member {$newUser->id} berhasil didaftarkan");
         } catch (Exception $e) {
             return redirect()->back()
                 ->with('error', $e->getMessage())

@@ -114,25 +114,6 @@ class MemberController extends Controller
     }
 
     /**
-     * Display register new member form
-     *
-     * @param Request $request
-     * @return View
-     */
-    public function register(Request $request): View
-    {
-        $upline           = null;
-        $availableUplines = $this->getAvailableUplines();
-
-        // Check if upline is specified in query parameter
-        if ($request->has('upline')) {
-            $upline = User::with('network')->find($request->upline);
-        }
-
-        return view('pins.reedem', compact('upline', 'availableUplines'));
-    }
-
-    /**
      * Get list of available uplines (members who can accept downlines)
      *
      * @return \Illuminate\Database\Eloquent\Collection
