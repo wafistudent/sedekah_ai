@@ -56,9 +56,10 @@ new class extends Component
             return collect([]);
         }
 
-        $query = WalletTransaction::where('wallet_id', $wallet->id);
+        $query = WalletTransaction::where('wallet_id', $wallet->id)
+        ->orderBy('created_at', 'desc');
 
-        if ($this->search) {
+        if ($this->search) {    
             $query->where(function ($q) {
                 $q->where('description', 'like', '%' . $this->search . '%')
                   ->orWhere('reference_type', 'like', '%' . $this->search . '%');
@@ -72,7 +73,7 @@ new class extends Component
 
     public function render()
     {
-        return view('components.tables.⚡wallet-transactions-table', [
+        return view('components.tables.wallet-transactions-table', [
             'transactions' => $this->transactions,
         ]);
     }

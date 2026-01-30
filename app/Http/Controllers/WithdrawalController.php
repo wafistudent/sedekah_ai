@@ -60,7 +60,9 @@ class WithdrawalController extends Controller
             ->latest()
             ->paginate(20);
 
-        return view('withdrawals.my-requests', compact('withdrawals'));
+        $danaAccount = auth()->user();
+
+        return view('withdrawals.my-requests', compact('withdrawals' , 'danaAccount'));
     }
 
     /**

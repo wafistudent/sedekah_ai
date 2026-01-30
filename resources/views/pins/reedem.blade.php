@@ -6,8 +6,8 @@
 <div class="mx-auto max-w-3xl space-y-6" x-data="registerMemberForm()">
     {{-- Page Header --}}
     <div>
-        <h1 class="text-xl font-bold text-gray-900 lg:text-2xl">Register New Member</h1>
-        <p class="mt-1 text-sm text-gray-600">Redeem 1 PIN to register a new member to your network</p>
+        <h1 class="text-xl font-bold text-gray-900 lg:text-2xl">Pendaftara Member Baru</h1>
+        <p class="mt-1 text-sm text-gray-600">Redeem 1 PIN untuk mendaftarkan member baru</p>
     </div>
 
     {{-- Current PIN Balance Alert --}}
@@ -21,7 +21,7 @@
             </div>
             <div class="ml-3">
                 <p class="text-sm text-blue-800">
-                    Your current PIN balance: <span class="font-semibold">{{ $currentBalance }}</span> PIN
+                    Pin yang tersisa: <span class="font-semibold">{{ $currentBalance }}</span> PIN
                     @if($currentBalance < 1)
                         <span class="ml-2 text-red-600">(Insufficient balance to register a member)</span>
                     @endif
@@ -36,7 +36,7 @@
 
         {{-- New Member Information --}}
         <div class="space-y-4">
-            <h3 class="text-lg font-medium text-gray-900">New Member Information</h3>
+            <h3 class="text-lg font-medium text-gray-900">Informasi Member Baru</h3>
 
             <div>
                 <label for="username" class="block text-sm font-medium text-gray-700">Username <span class="text-red-500">*</span></label>
@@ -59,7 +59,7 @@
             </div>
 
             <div>
-                <label for="name" class="block text-sm font-medium text-gray-700">Full Name <span class="text-red-500">*</span></label>
+                <label for="name" class="block text-sm font-medium text-gray-700">Nama Lengkap <span class="text-red-500">*</span></label>
                 <input 
                     type="text" 
                     name="name" 
@@ -92,7 +92,7 @@
             </div>
 
             <div>
-                <label for="phone" class="block text-sm font-medium text-gray-700">Phone</label>
+                <label for="phone" class="block text-sm font-medium text-gray-700">Nomer Whatsapp</label>
                 <input 
                     type="number" 
                     name="phone" 
@@ -124,7 +124,7 @@
             </div>
 
             <div>
-                <label for="password_confirmation" class="block text-sm font-medium text-gray-700">Confirm Password <span class="text-red-500">*</span></label>
+                <label for="password_confirmation" class="block text-sm font-medium text-gray-700">Konfirmasi Password <span class="text-red-500">*</span></label>
                 <input 
                     type="password" 
                     name="password_confirmation" 
@@ -141,10 +141,10 @@
 
         {{-- DANA Account Information --}}
         <div class="space-y-4 border-t pt-6">
-            <h3 class="text-lg font-medium text-gray-900">DANA Account Information</h3>
+            <h3 class="text-lg font-medium text-gray-900">Informasi Akun DANA</h3>
 
             <div>
-                <label for="dana_name" class="block text-sm font-medium text-gray-700">DANA Account Name <span class="text-red-500">*</span></label>
+                <label for="dana_name" class="block text-sm font-medium text-gray-700">Nama Pemilik Akun DANA <span class="text-red-500">*</span></label>
                 <input 
                     type="text" 
                     name="dana_name" 
@@ -159,7 +159,7 @@
             </div>
 
             <div>
-                <label for="dana_number" class="block text-sm font-medium text-gray-700">DANA Account Number <span class="text-red-500">*</span></label>
+                <label for="dana_number" class="block text-sm font-medium text-gray-700">Nomer Akun DANA <span class="text-red-500">*</span></label>
                 <input 
                     type="text" 
                     name="dana_number" 
@@ -176,10 +176,10 @@
 
         {{-- Network Placement --}}
         <div class="space-y-4 border-t pt-6">
-            <h3 class="text-lg font-medium text-gray-900">Network Placement</h3>
+            <h3 class="text-lg font-medium text-gray-900">Informasi Upline</h3>
 
             <div>
-                <label for="upline_id" class="block text-sm font-medium text-gray-700">Select Upline <span class="text-red-500">*</span></label>
+                <label for="upline_id" class="block text-sm font-medium text-gray-700">Username Upline <span class="text-red-500">*</span></label>
                 <select 
                     name="upline_id" 
                     id="upline_id" 
@@ -190,18 +190,11 @@
                     <option value="">Select an upline...</option>
                     @if($upline)
                         <option value="{{ $upline->id }}" selected>{{ $upline->name }} ({{ $upline->id }})</option>
-                    @else
-                        <option value="{{ auth()->id() }}" {{ old('upline_id') == auth()->id() ? 'selected' : '' }}>Myself ({{ auth()->user()->name }})</option>
-                        @foreach($availableUplines as $availableUpline)
-                            <option value="{{ $availableUpline->id }}" {{ old('upline_id') == $availableUpline->id ? 'selected' : '' }}>
-                                {{ $availableUpline->name }} ({{ $availableUpline->id }})
-                            </option>
-                        @endforeach
                     @endif
                 </select>
                 @if($upline)
                     <input type="hidden" name="upline_id" value="{{ $upline->id }}">
-                    <p class="mt-1 text-sm text-gray-500">Pre-selected from network tree</p>
+                    {{-- <p class="mt-1 text-sm text-gray-500">Pre-selected from network tree</p> --}}
                 @endif
                 @error('upline_id')
                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -215,11 +208,11 @@
                     id="is_marketing" 
                     value="1"
                     {{ old('is_marketing') ? 'checked' : '' }}
-                    class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 hidden"
                 >
-                <label for="is_marketing" class="ml-2 block text-sm text-gray-900">
+                {{-- <label for="is_marketing" class="ml-2 block text-sm text-gray-900">
                     Marketing Member (stops upward commission distribution)
-                </label>
+                </label> --}}
             </div>
         </div>
 

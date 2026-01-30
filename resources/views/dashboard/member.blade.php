@@ -7,48 +7,48 @@
     {{-- Page Header --}}
     <div>
         <h1 class="text-xl font-bold text-gray-900 lg:text-2xl">Welcome, {{ auth()->user()->name }}!</h1>
-        <p class="mt-1 text-sm text-gray-600">Your MLM dashboard and statistics</p>
+        <p class="mt-1 text-sm text-gray-600">Dashboard & statistik anda</p>
     </div>
 
     {{-- Stats Cards --}}
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 sm:gap-6">
         <x-stats-card 
-            title="Wallet Balance" 
+            title="Saldo Wallet" 
             :value="'Rp ' . number_format($walletBalance, 0, ',', '.')" 
             color="green"
             :icon="'<svg class=\'w-6 h-6\' fill=\'currentColor\' viewBox=\'0 0 20 20\'><path fill-rule=\'evenodd\' d=\'M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z\' clip-rule=\'evenodd\'/></svg>'" 
         />
 
         <x-stats-card 
-            title="PIN Balance" 
+            title="Saldo PIN" 
             :value="$pinBalance" 
             color="blue"
             :icon="'<svg class=\'w-6 h-6\' fill=\'currentColor\' viewBox=\'0 0 20 20\'><path d=\'M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z\'/><path fill-rule=\'evenodd\' d=\'M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z\' clip-rule=\'evenodd\'/></svg>'" 
         />
 
         <x-stats-card 
-            title="Total Commission" 
+            title="Total Komisi" 
             :value="'Rp ' . number_format($totalCommission, 0, ',', '.')" 
             color="purple"
             :icon="'<svg class=\'w-6 h-6\' fill=\'currentColor\' viewBox=\'0 0 20 20\'><path d=\'M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z\'/><path fill-rule=\'evenodd\' d=\'M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z\' clip-rule=\'evenodd\'/></svg>'" 
         />
 
         <x-stats-card 
-            title="Total Downlines" 
+            title="Total Downline" 
             :value="$totalDownlines" 
             color="indigo"
             :icon="'<svg class=\'w-6 h-6\' fill=\'currentColor\' viewBox=\'0 0 20 20\'><path d=\'M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z\'/></svg>'" 
         />
 
         <x-stats-card 
-            title="Active Downlines" 
+            title="Downline Aktif" 
             :value="$activeDownlines" 
             color="teal"
             :icon="'<svg class=\'w-6 h-6\' fill=\'currentColor\' viewBox=\'0 0 20 20\'><path fill-rule=\'evenodd\' d=\'M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z\' clip-rule=\'evenodd\'/></svg>'" 
         />
 
         <x-stats-card 
-            title="Pending Withdrawals" 
+            title="Pending Withdraw" 
             :value="$pendingWithdrawals" 
             color="orange"
             :icon="'<svg class=\'w-6 h-6\' fill=\'currentColor\' viewBox=\'0 0 20 20\'><path fill-rule=\'evenodd\' d=\'M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z\' clip-rule=\'evenodd\'/></svg>'" 
@@ -90,7 +90,7 @@
     {{-- Recent Transactions --}}
     <div class="bg-white rounded-lg shadow">
         <div class="border-b border-gray-200 px-6 py-4">
-            <h3 class="text-lg font-medium text-gray-900">Recent Transactions</h3>
+            <h3 class="text-lg font-medium text-gray-900">Transaksi Terbaru</h3>
         </div>
         <div class="p-6">
             <div class="space-y-4">
