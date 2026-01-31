@@ -1,19 +1,19 @@
 <?php
-
 namespace App\Services;
 
 use App\Models\CommissionConfig;
 use App\Models\Network;
+use App\Models\User;
 use Exception;
 use Illuminate\Support\Facades\DB;
 
 /**
  * CommissionService
- * 
+ *
  * Handles commission calculation and distribution to upline members
  * Implements is_marketing logic where marketing members don't pass
  * commission up but still receive commission from downlines
- * 
+ *
  * @package App\Services
  */
 class CommissionService
@@ -34,23 +34,23 @@ class CommissionService
     public function __construct(NetworkService $networkService, WalletService $walletService)
     {
         $this->networkService = $networkService;
-        $this->walletService = $walletService;
+        $this->walletService  = $walletService;
     }
 
     /**
      * Calculate and distribute commission to upline members
-     * 
+     *
      * Business Logic for Marketing Members:
      * 1. Marketing member does NOT give bonus to upline when they register
      * 2. Marketing member STILL RECEIVES bonus from their downline
      * 3. Marketing member does NOT stop the chain - bonus continues upward
-     * 
+     *
      * When a new member registers:
      * - Check if the NEW MEMBER is marketing
      * - If marketing: STOP - no commission distributed to anyone
      * - If normal: Distribute commission to ALL upline members (max 8 levels)
      * - Marketing members in upline chain RECEIVE commission (they don't stop the chain)
-     * 
+     *
      * @param string $newMemberId
      * @return void
      * @throws Exception
@@ -61,7 +61,7 @@ class CommissionService
             // Get the new member's network record
             $newMemberNetwork = Network::where('member_id', $newMemberId)->first();
 
-            if (!$newMemberNetwork) {
+            if (! $newMemberNetwork) {
                 return; // No network record, nothing to do
             }
 
@@ -71,63 +71,80 @@ class CommissionService
                 return; // Stop here - no commission distributed
             }
 
-            // Get upline chain (max 8 levels)
-            $uplineChain = $this->networkService->getUplineChain($newMemberId, 8);
+            // Process each level
+            $currentLevel = 1;
 
-            if (empty($uplineChain)) {
-                return; // No uplines, nothing to do
+            // Get upline chain (max 8 levels) return array
+            $uplineChain = $this->networkService->getUplineChain($newMemberId, 8);
+            $adminId     = User::role('admin')->first();
+
+            if (! $adminId) {
+                throw new Exception('Admin user not found for commission fallback');
             }
+
+            // if (empty($uplineChain)) {
+            //     // Insert bonus to admin
+            //     return;
+            //     }
 
             // Get active commission configs
             $commissionConfigs = CommissionConfig::where('is_active', true)
-                ->where('level', '<=', count($uplineChain))
+                ->where('level', '<=', 8)
                 ->orderBy('level')
                 ->get()
                 ->keyBy('level');
 
-            // Process each level
-            $currentLevel = 1;
-            foreach ($uplineChain as $uplineMemberId) {
-                // Check if there's a commission config for this level
-                if (!isset($commissionConfigs[$currentLevel])) {
-                    $currentLevel++;
+            // Loop FIXED 8 LEVEL
+            for ($currentLevel = 1; $currentLevel <= 8; $currentLevel++) {
+
+                // Ambil upline berdasarkan index (level - 1)
+                $uplineMemberId = $uplineChain[$currentLevel - 1] ?? null;
+
+                // Kalau config level ini tidak ada → skip
+                if (! isset($commissionConfigs[$currentLevel])) {
                     continue;
                 }
 
                 $config = $commissionConfigs[$currentLevel];
 
-                // Skip if commission amount is 0
+                // Kalau komisi 0 → skip
                 if ($config->amount <= 0) {
-                    $currentLevel++;
                     continue;
                 }
 
-                // IMPORTANT: Do NOT check if upline is marketing here
-                // Marketing members in the upline chain STILL RECEIVE commission from downline
-                // They just don't GIVE commission when they register themselves
-                // The chain is NOT broken by marketing members in the upline
-
-                // Credit commission to upline's wallet
                 try {
-                    $this->walletService->credit(
-                        userId: $uplineMemberId,
-                        amount: $config->amount,
-                        referenceType: 'commission',
-                        referenceId: null,
-                        fromMemberId: $newMemberId,
-                        level: $currentLevel,
-                        description: "Commission level {$currentLevel} from member {$newMemberId}"
-                    );
+                    if ($uplineMemberId) {
+                        $this->walletService->credit(
+                            userId: $uplineMemberId,
+                            amount: $config->amount,
+                            referenceType: 'commission',
+                            referenceId: null,
+                            fromMemberId: $newMemberId,
+                            level: $currentLevel,
+                            description: "Komisi level {$currentLevel} dari member {$newMemberId}"
+                        );
+                    } else {
+                        $this->walletService->credit(
+                            userId: $adminId->id,
+                            amount: $config->amount,
+                            referenceType: 'commission',
+                            referenceId: null,
+                            fromMemberId: $newMemberId,
+                            level: $currentLevel,
+                            description: "Sisa Komisi level {$currentLevel} dari member {$newMemberId}"
+                        );
+                    }
                 } catch (Exception $e) {
-                    // Log error but continue processing other levels
-                    // In production, you might want to use Laravel's logging
-                    // For now, we'll rethrow to ensure data consistency
                     throw new Exception(
-                        "Failed to credit commission to {$uplineMemberId} at level {$currentLevel}: " . $e->getMessage()
+                        "Failed to credit commission at level {$currentLevel}: " . $e->getMessage()
                     );
                 }
 
-                $currentLevel++;
+                logger()->info('Commission loop', [
+                    'level'             => $currentLevel,
+                    'upline_from_chain' => $uplineChain[$currentLevel - 1] ?? 'NULL',
+                    'fallback_admin'    => $adminId,
+                ]);
             }
         });
     }

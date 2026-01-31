@@ -24,7 +24,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     // Member routes
     Route::get('/members/network-tree', [MemberController::class, 'networkTree'])->name('members.network-tree');
-    Route::get('/members/register', [MemberController::class, 'register'])->name('members.register');
 
     // PIN routes
     Route::prefix('pins')->name('pins.')->group(function () {

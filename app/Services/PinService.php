@@ -259,7 +259,7 @@ class PinService
                 'before_point' => $sponsorBeforePoint,
                 'after_point' => $sponsorAfterPoint,
                 'status' => 'success',
-                'description' => "Redeemed 1 PIN to register member {$newUser->id}",
+                'description' => "Redeem 1 PIN untuk registrasi {$newUser->id}",
             ]);
 
             // Transfer registration fee to admin wallet
@@ -274,7 +274,7 @@ class PinService
                     referenceId: null,
                     fromMemberId: $newUser->id,
                     level: null,
-                    description: "Registration fee from new member {$newUser->id}"
+                    description: "Biaya registrasi {$newUser->id}"
                 );
             }
 

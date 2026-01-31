@@ -3,7 +3,7 @@
 use Livewire\Component;
 use Livewire\WithPagination;
 use Livewire\Attributes\Url;
-use App\Models\PinTransaction;
+use App\Models\WalletTransaction;
 
 new class extends Component
 {
@@ -49,13 +49,20 @@ new class extends Component
 
     public function getTransactionsProperty()
     {
-        $query = PinTransaction::where('member_id', auth()->id());
+        $user = auth()->user();
+        $wallet = $user->wallet;
+        
+        if (!$wallet) {
+            return collect([]);
+        }
 
-        if ($this->search) {
+        $query = WalletTransaction::where('wallet_id', $wallet->id)
+        ->orderBy('created_at', 'desc');
+
+        if ($this->search) {    
             $query->where(function ($q) {
                 $q->where('description', 'like', '%' . $this->search . '%')
-                  ->orWhere('target_id', 'like', '%' . $this->search . '%')
-                  ->orWhere('type', 'like', '%' . $this->search . '%');
+                  ->orWhere('reference_type', 'like', '%' . $this->search . '%');
             });
         }
 
@@ -66,7 +73,7 @@ new class extends Component
 
     public function render()
     {
-        return view('components.tables.⚡pin-transactions-table', [
+        return view('components.tables.wallet-transactions-table', [
             'transactions' => $this->transactions,
         ]);
     }
@@ -134,12 +141,11 @@ new class extends Component
                         </div>
                     </th>
                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Target</th>
                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
-                    <th wire:click="sortBy('point')" scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 select-none">
+                    <th wire:click="sortBy('amount')" scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 select-none">
                         <div class="flex items-center justify-end gap-1">
-                            Points
-                            @if($sortField === 'point')
+                            Amount
+                            @if($sortField === 'amount')
                                 <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
                                     @if($sortDirection === 'asc')
                                         <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
@@ -150,11 +156,10 @@ new class extends Component
                             @endif
                         </div>
                     </th>
-                    <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Balance</th>
-                    <th wire:click="sortBy('status')" scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 select-none">
-                        <div class="flex items-center justify-center gap-1">
-                            Status
-                            @if($sortField === 'status')
+                    <th wire:click="sortBy('balance_after')" scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 select-none">
+                        <div class="flex items-center justify-end gap-1">
+                            Balance
+                            @if($sortField === 'balance_after')
                                 <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
                                     @if($sortDirection === 'asc')
                                         <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
@@ -171,42 +176,33 @@ new class extends Component
                 @forelse($transactions as $transaction)
                     <tr class="hover:bg-gray-50 transition-colors">
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                            {{ $transaction->created_at->format('d M Y, H:i') }}
+                            {{ \Carbon\Carbon::parse($transaction->created_at)->format('d M Y, H:i') }}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <span class="inline-flex rounded-full px-2 py-1 text-xs font-semibold
-                                {{ $transaction->type === 'purchase' ? 'bg-green-100 text-green-800' : '' }}
-                                {{ $transaction->type === 'transfer' ? 'bg-blue-100 text-blue-800' : '' }}
-                                {{ $transaction->type === 'reedem' ? 'bg-purple-100 text-purple-800' : '' }}
+                                {{ $transaction->reference_type === 'commission' ? 'bg-green-100 text-green-800' : '' }}
+                                {{ $transaction->reference_type === 'withdrawal' ? 'bg-red-100 text-red-800' : '' }}
+                                {{ $transaction->reference_type === 'registration_fee' ? 'bg-blue-100 text-blue-800' : '' }}
+                                {{ $transaction->reference_type === 'adjustment' ? 'bg-yellow-100 text-yellow-800' : '' }}
                             ">
-                                {{ ucfirst($transaction->type) }}
+                                {{ ucfirst(str_replace('_', ' ', $transaction->reference_type)) }}
                             </span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                            {{ $transaction->target_id ? $transaction->target_id : '-' }}
                         </td>
                         <td class="px-6 py-4 text-sm text-gray-900">
-                            {{ $transaction->description }}
+                            {{ $transaction->description ?? '-' }}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium
-                            {{ $transaction->point >= 0 ? 'text-green-600' : 'text-red-600' }}
+                            {{ $transaction->type === 'credit' ? 'text-green-600' : 'text-red-600' }}
                         ">
-                            {{ $transaction->point >= 0 ? '+' : '' }}{{ $transaction->point }}
+                            {{ $transaction->type === 'credit' ? '+' : '-' }}Rp {{ number_format(abs($transaction->amount), 0, ',', '.') }}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm text-gray-900">
-                            {{ $transaction->after_point }}
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-center">
-                            <span class="inline-flex rounded-full px-2 py-1 text-xs font-semibold
-                                {{ $transaction->status === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}
-                            ">
-                                {{ ucfirst($transaction->status) }}
-                            </span>
+                            Rp {{ number_format($transaction->balance_after, 0, ',', '.') }}
                         </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="7" class="px-6 py-12 text-center">
+                        <td colspan="5" class="px-6 py-12 text-center">
                             <div class="flex flex-col items-center justify-center text-gray-500">
                                 <svg class="h-12 w-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
