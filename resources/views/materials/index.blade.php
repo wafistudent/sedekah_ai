@@ -6,8 +6,8 @@
 <div class="space-y-6">
     {{-- Page Header --}}
     <div>
-        <h1 class="text-xl font-bold text-gray-900 lg:text-2xl">Sumber Belajar</h1>
-        <p class="mt-1 text-sm text-gray-600">Akses materi pembelajaran dan pelatihan</p>
+        <h1 class="text-xl font-bold text-gray-900 lg:text-2xl">Produk AISosial</h1>
+        <p class="mt-1 text-sm text-gray-600">Akses produk dari AISosial</p>
     </div>
 
     {{-- Materials Grid --}}
