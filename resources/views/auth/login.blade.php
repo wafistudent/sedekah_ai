@@ -15,6 +15,13 @@
             </div>
             <!-- Form -->
             <div class="w-full max-w-md">
+                @if ($errors->any())
+                    <div class="mb-5">
+                        @foreach ($errors->all() as $error)
+                            <x-alert type="error" :message="$error" />
+                        @endforeach
+                    </div>
+                @endif
                 <div class="mb-5 sm:mb-8">
                     <h1 class="text-title-sm sm:text-title-md mb-2 font-semibold text-gray-800">
                         Sign In
