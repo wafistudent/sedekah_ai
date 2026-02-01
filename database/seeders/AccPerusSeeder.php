@@ -17,11 +17,11 @@ class AccPerusSeeder extends Seeder
         $user = User::firstOrCreate(
             ['id' => 'member1'],
             [
-                'email'       => 'member1@sedekah.ai',
+                'email'       => 'cc3a@sedekah.ai',
                 'password'    => Hash::make('password'),
-                'name'        => 'Member 1',
+                'name'        => 'Perusahaan CC3A',
                 'phone'       => '081234567890',
-                'dana_name'   => 'member1',
+                'dana_name'   => 'cc3a',
                 'dana_number' => '081234567890',
                 'pin_point'   => 0,
                 'status'      => 'active',
