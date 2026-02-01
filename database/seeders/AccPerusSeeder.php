@@ -15,7 +15,7 @@ class AccPerusSeeder extends Seeder
     public function run(): void
     {
         $user = User::firstOrCreate(
-            ['id' => 'member1'],
+            ['id' => 'cc3a'],
             [
                 'email'       => 'cc3a@sedekah.ai',
                 'password'    => Hash::make('password'),
