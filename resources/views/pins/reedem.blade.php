@@ -201,6 +201,21 @@
                 @enderror
             </div>
 
+            <div>
+                <label for="dana_number" class="block text-sm font-medium text-gray-700">PIN Marketing, <span class="font-bold"> Jika Ingin Membuat Member Marketing</span></label>
+                <input 
+                    type="text" 
+                    name="marketing_pin" 
+                    id="marketing_pin" 
+                    required
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-base"
+                    value=""
+                >
+                @error('dana_number')
+                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                @enderror
+            </div>
+
             <div class="flex items-center">
                 <input 
                     type="checkbox" 

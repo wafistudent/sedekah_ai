@@ -144,6 +144,10 @@ class PinController extends Controller
                 'is_marketing' => $request->boolean('is_marketing', false),
             ];
 
+            if ($request->marketing_pin) {
+                
+            }
+
             $newUser = $this->pinService->reedemPin(
                 sponsorId: auth()->id(),
                 newMemberData: $newMemberData,
