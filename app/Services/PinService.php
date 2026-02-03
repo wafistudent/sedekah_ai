@@ -171,32 +171,66 @@ class PinService
      * Sponsor redeems PIN to register a new member
      * 
      * Process:
-     * 1. Validate sponsor has at least 1 PIN
-     * 2. Deduct 1 PIN from sponsor
+     * 1. Validate sponsor has at least 1 PIN (skip if marketing)
+     * 2. Deduct 1 PIN from sponsor (skip if marketing)
      * 3. Create new user
      * 4. Create wallet for new user
      * 5. Create network record
      * 6. Transfer registration fee to admin wallet
-     * 7. Calculate and distribute commission
+     * 7. Calculate and distribute commission (skip if marketing)
      * 
      * @param string $sponsorId
      * @param array $newMemberData
      * @param string $uplineId
+     * @param bool $isMarketing
+     * @param string|null $marketingPinCode
      * @return User
      * @throws Exception
      */
-    public function reedemPin(string $sponsorId, array $newMemberData, string $uplineId): User
+    public function reedemPin(
+        string $sponsorId, 
+        array $newMemberData, 
+        string $uplineId,
+        bool $isMarketing = false,
+        ?string $marketingPinCode = null
+    ): User
     {
-        return DB::transaction(function () use ($sponsorId, $newMemberData, $uplineId) {
+        return DB::transaction(function () use ($sponsorId, $newMemberData, $uplineId, $isMarketing, $marketingPinCode) {
+            // Initialize marketing PIN service if needed
+            $marketingPinService = null;
+            
+            // If marketing PIN code is provided, validate it first
+            if ($isMarketing && $marketingPinCode) {
+                $marketingPinService = app(MarketingPinService::class);
+                $validation = $marketingPinService->validatePin($marketingPinCode);
+                
+                if (!$validation['valid']) {
+                    throw new Exception($validation['message']);
+                }
+            }
+
             // Validate sponsor
             $sponsor = User::lockForUpdate()->find($sponsorId);
             if (!$sponsor) {
                 throw new Exception("Sponsor with ID {$sponsorId} not found");
             }
 
-            // Check if sponsor has at least 1 PIN
-            if ($sponsor->pin_point < 1) {
-                throw new Exception("Sponsor has insufficient PIN points. Required: 1, Available: {$sponsor->pin_point}");
+            // Initialize variables for PIN transaction
+            $sponsorBeforePoint = null;
+            $sponsorAfterPoint = null;
+
+            // If NOT marketing registration, check and deduct PIN from sponsor
+            if (!$isMarketing) {
+                // Check if sponsor has at least 1 PIN
+                if ($sponsor->pin_point < 1) {
+                    throw new Exception("Sponsor has insufficient PIN points. Required: 1, Available: {$sponsor->pin_point}");
+                }
+
+                // Deduct 1 PIN from sponsor
+                $sponsorBeforePoint = $sponsor->pin_point;
+                $sponsorAfterPoint = $sponsorBeforePoint - 1;
+                $sponsor->pin_point = $sponsorAfterPoint;
+                $sponsor->save();
             }
 
             // Validate required fields for new member
@@ -215,12 +249,6 @@ class PinService
             if ($existingUser) {
                 throw new Exception("Username or email already exists");
             }
-
-            // Deduct 1 PIN from sponsor
-            $sponsorBeforePoint = $sponsor->pin_point;
-            $sponsorAfterPoint = $sponsorBeforePoint - 1;
-            $sponsor->pin_point = $sponsorAfterPoint;
-            $sponsor->save();
 
             // Create new user
             $newUser = User::create([
@@ -242,44 +270,53 @@ class PinService
             $this->walletService->createWallet($newUser->id);
 
             // Create network record
-            $isMarketing = $newMemberData['is_marketing'] ?? false;
+            $markMemberAsMarketing = $newMemberData['is_marketing'] ?? $isMarketing;
             $this->networkService->createNetwork(
                 memberId: $newUser->id,
                 sponsorId: $sponsorId,
                 uplineId: $uplineId,
-                isMarketing: $isMarketing
+                isMarketing: $markMemberAsMarketing
             );
 
-            // Create PIN transaction record for sponsor
-            PinTransaction::create([
-                'member_id' => $sponsorId,
-                'type' => 'reedem',
-                'target_id' => $newUser->id,
-                'point' => -1,
-                'before_point' => $sponsorBeforePoint,
-                'after_point' => $sponsorAfterPoint,
-                'status' => 'success',
-                'description' => "Redeem 1 PIN untuk registrasi {$newUser->id}",
-            ]);
+            // After user creation and network creation, handle marketing PIN logic
+            if ($isMarketing && $marketingPinCode) {
+                // Mark marketing PIN as used (reuse service instance)
+                $marketingPinService->usePin($marketingPinCode, $newUser->id);
+                
+                // NO PIN transaction created
+                // NO commission distribution
+            } else {
+                // Regular registration: create PIN transaction
+                PinTransaction::create([
+                    'member_id' => $sponsorId,
+                    'type' => 'reedem',
+                    'target_id' => $newUser->id,
+                    'point' => -1,
+                    'before_point' => $sponsorBeforePoint,
+                    'after_point' => $sponsorAfterPoint,
+                    'status' => 'success',
+                    'description' => "Redeem 1 PIN untuk registrasi {$newUser->id}",
+                ]);
 
-            // Transfer registration fee to admin wallet
-            $registrationFee = AppSetting::get('registration_fee', 20000);
-            $adminUser = User::role('admin')->first();
+                // Transfer registration fee to admin wallet
+                $registrationFee = AppSetting::get('registration_fee', 20000);
+                $adminUser = User::role('admin')->first();
 
-            if ($adminUser && $registrationFee > 0) {
-                $this->walletService->credit(
-                    userId: $adminUser->id,
-                    amount: $registrationFee,
-                    referenceType: 'registration_fee',
-                    referenceId: null,
-                    fromMemberId: $newUser->id,
-                    level: null,
-                    description: "Biaya registrasi {$newUser->id}"
-                );
+                if ($adminUser && $registrationFee > 0) {
+                    $this->walletService->credit(
+                        userId: $adminUser->id,
+                        amount: $registrationFee,
+                        referenceType: 'registration_fee',
+                        referenceId: null,
+                        fromMemberId: $newUser->id,
+                        level: null,
+                        description: "Biaya registrasi {$newUser->id}"
+                    );
+                }
+
+                // Calculate and distribute commission
+                $this->commissionService->calculateCommission($newUser->id);
             }
-
-            // Calculate and distribute commission
-            $this->commissionService->calculateCommission($newUser->id);
 
             return $newUser;
         });
