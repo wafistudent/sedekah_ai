@@ -103,7 +103,7 @@ new class extends Component
 
     public function render()
     {
-        return view('components.tables.⚡commission-summary-table', [
+        return view('components.tables.commission-summary-table', [
             'commissions' => $this->commissions,
             'totalCommission' => $this->totalCommission,
             'totalTransactions' => $this->totalTransactions,
