@@ -72,5 +72,15 @@ Route::middleware(['auth'])->group(function () {
         
         // Material management routes
         Route::resource('materials', AdminMaterialController::class);
+        
+        // Marketing PIN Management
+        Route::get('/marketing-pins', [App\Http\Controllers\Admin\MarketingPinController::class, 'index'])
+            ->name('marketing-pins.index');
+        Route::get('/marketing-pins/create', [App\Http\Controllers\Admin\MarketingPinController::class, 'create'])
+            ->name('marketing-pins.create');
+        Route::post('/marketing-pins', [App\Http\Controllers\Admin\MarketingPinController::class, 'store'])
+            ->name('marketing-pins.store');
+        Route::get('/marketing-pins/{marketingPin}', [App\Http\Controllers\Admin\MarketingPinController::class, 'show'])
+            ->name('marketing-pins.show');
     });
 });
