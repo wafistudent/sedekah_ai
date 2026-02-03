@@ -30,6 +30,19 @@ class NewUserRequest extends FormRequest
             'dana_name' => 'required|string|max:255',
             'dana_number' => 'required|string|max:20',
             'upline_id' => 'required|exists:users,id',
+            'marketing_pin_code' => 'nullable|string|size:8',
+        ];
+    }
+
+    /**
+     * Get custom messages for validator errors.
+     *
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'marketing_pin_code.size' => 'Kode Marketing PIN harus 8 karakter.',
         ];
     }
 }

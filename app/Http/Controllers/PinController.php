@@ -118,21 +118,25 @@ class PinController extends Controller
 
     /**
      * Process PIN redemption (register new member)
+     * Supports both regular and marketing PIN registration
      *
-     * @param Request $request
+     * @param NewUserRequest $request
      * @return RedirectResponse
      */
-    public function storeReedem(NewUserRequest $request)
+    public function storeReedem(NewUserRequest $request): RedirectResponse
     {
-        // return response()->json($request);
-
-        if (! $request->validated()) {
-            return redirect()->back()
-                ->withErrors($request->errors())
-                ->withInput();
-        }
-
         try {
+            // Check if marketing PIN code is provided
+            $marketingPinCode = $request->input('marketing_pin_code');
+            $isMarketing = !empty($marketingPinCode);
+            
+            // Validate marketing PIN if provided
+            if ($isMarketing) {
+                $request->validate([
+                    'marketing_pin_code' => 'required|string|size:8|exists:marketing_pins,code',
+                ]);
+            }
+            
             $newMemberData = [
                 'id'           => $request->username,
                 'name'         => $request->name,
@@ -144,18 +148,22 @@ class PinController extends Controller
                 'is_marketing' => $request->boolean('is_marketing', false),
             ];
 
-            if ($request->marketing_pin) {
-                
-            }
-
+            // Call PinService with marketing PIN support
             $newUser = $this->pinService->reedemPin(
                 sponsorId: auth()->id(),
+                uplineId: $request->upline_id,
                 newMemberData: $newMemberData,
-                uplineId: $request->upline_id
+                isMarketing: $isMarketing,
+                marketingPinCode: $marketingPinCode
             );
 
+            $message = $isMarketing 
+                ? 'Member baru berhasil didaftarkan menggunakan Marketing PIN!'
+                : 'Member baru berhasil didaftarkan!';
+
             return redirect()->route('members.network-tree')
-                ->with('success', "Member {$newUser->id} berhasil didaftarkan");
+                ->with('success', $message);
+            
         } catch (Exception $e) {
             return redirect()->back()
                 ->with('error', $e->getMessage())
