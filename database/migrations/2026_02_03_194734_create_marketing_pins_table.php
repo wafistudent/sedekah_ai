@@ -35,7 +35,6 @@ return new class extends Migration
             $table->foreign('redeemed_by_member_id')->references('id')->on('users')->onDelete('set null');
             
             // Indexes for performance
-            $table->index('code');
             $table->index('status');
             $table->index('admin_id');
             $table->index('designated_member_id');

@@ -196,6 +196,9 @@ class PinService
     ): User
     {
         return DB::transaction(function () use ($sponsorId, $newMemberData, $uplineId, $isMarketing, $marketingPinCode) {
+            // Initialize marketing PIN service if needed
+            $marketingPinService = null;
+            
             // If marketing PIN code is provided, validate it first
             if ($isMarketing && $marketingPinCode) {
                 $marketingPinService = app(MarketingPinService::class);
@@ -267,18 +270,17 @@ class PinService
             $this->walletService->createWallet($newUser->id);
 
             // Create network record
-            $isMemberMarketing = $newMemberData['is_marketing'] ?? $isMarketing;
+            $markMemberAsMarketing = $newMemberData['is_marketing'] ?? $isMarketing;
             $this->networkService->createNetwork(
                 memberId: $newUser->id,
                 sponsorId: $sponsorId,
                 uplineId: $uplineId,
-                isMarketing: $isMemberMarketing
+                isMarketing: $markMemberAsMarketing
             );
 
             // After user creation and network creation, handle marketing PIN logic
             if ($isMarketing && $marketingPinCode) {
-                // Mark marketing PIN as used
-                $marketingPinService = app(MarketingPinService::class);
+                // Mark marketing PIN as used (reuse service instance)
                 $marketingPinService->usePin($marketingPinCode, $newUser->id);
                 
                 // NO PIN transaction created
