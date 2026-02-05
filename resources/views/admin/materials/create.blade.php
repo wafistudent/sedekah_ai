@@ -6,8 +6,8 @@
 <div class="mx-auto max-w-2xl space-y-6">
     {{-- Page Header --}}
     <div>
-        <h1 class="text-xl font-bold text-gray-900 lg:text-2xl">Add New Material</h1>
-        <p class="mt-1 text-sm text-gray-600">Upload a new learning material for members</p>
+        <h1 class="text-xl font-bold text-gray-900 lg:text-2xl">Tambahkan Produk Baru</h1>
+        <p class="mt-1 text-sm text-gray-600">Upload produk untuk member</p>
     </div>
 
     {{-- Create Form --}}
@@ -15,7 +15,7 @@
         @csrf
 
         <div>
-            <label for="title" class="block text-sm font-medium text-gray-700">Title <span class="text-red-500">*</span></label>
+            <label for="title" class="block text-sm font-medium text-gray-700">Judul <span class="text-red-500">*</span></label>
             <input 
                 type="text" 
                 name="title" 
@@ -32,7 +32,7 @@
         </div>
 
         <div>
-            <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
+            <label for="description" class="block text-sm font-medium text-gray-700">Deskripsi</label>
             <textarea 
                 name="description" 
                 id="description" 
@@ -46,7 +46,7 @@
         </div>
 
         <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Material Type <span class="text-red-500">*</span></label>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Tipe Materi <span class="text-red-500">*</span></label>
             <div class="flex gap-4">
                 <label class="inline-flex items-center">
                     <input 
@@ -124,8 +124,8 @@
                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-base"
             >
                 <option value="all" {{ old('access_type', 'all') === 'all' ? 'selected' : '' }}>All Members</option>
-                <option value="marketing_only" {{ old('access_type') === 'marketing_only' ? 'selected' : '' }}>Marketing Only</option>
-                <option value="non_marketing_only" {{ old('access_type') === 'non_marketing_only' ? 'selected' : '' }}>Non-Marketing Only</option>
+                <option value="marketing_only" {{ old('access_type') === 'marketing_only' ? 'selected' : '' }}>Marketing Saja</option>
+                <option value="non_marketing_only" {{ old('access_type') === 'non_marketing_only' ? 'selected' : '' }}>Non-Marketing Saja </option>
             </select>
             @error('access_type')
                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -133,7 +133,7 @@
         </div>
 
         <div>
-            <label for="order" class="block text-sm font-medium text-gray-700">Display Order</label>
+            <label for="order" class="block text-sm font-medium text-gray-700">Urutan tampilan</label>
             <input 
                 type="number" 
                 name="order" 
@@ -143,7 +143,7 @@
                 value="{{ old('order', 0) }}"
                 placeholder="0"
             >
-            <p class="mt-1 text-xs text-gray-500">Lower numbers appear first (default: 0)</p>
+            <p class="mt-1 text-xs text-gray-500">Semakin rendah, semakin di atas (default: 0)</p>
             @error('order')
                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
             @enderror
@@ -158,7 +158,7 @@
                 type="submit" 
                 class="inline-flex items-center justify-center rounded-md bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-blue-500"
             >
-                Create Material
+                Upload Produk
             </button>
         </div>
     </form>
