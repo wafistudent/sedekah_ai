@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\MaterialController as AdminMaterialController;
+use App\Http\Controllers\Admin\MarketingPinController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CommissionController;
 use App\Http\Controllers\DashboardController;
@@ -73,5 +74,11 @@ Route::middleware(['auth'])->group(function () {
         
         // Material management routes
         Route::resource('materials', AdminMaterialController::class);
+        
+        // Marketing PIN Management
+        Route::get('/marketing-pins', [MarketingPinController::class, 'index'])->name('marketing-pins.index');
+        Route::get('/marketing-pins/create', [MarketingPinController::class, 'create'])->name('marketing-pins.create');
+        Route::post('/marketing-pins', [MarketingPinController::class, 'store'])->name('marketing-pins.store');
+        Route::get('/marketing-pins/{marketingPin}', [MarketingPinController::class, 'show'])->name('marketing-pins.show');
     });
 });

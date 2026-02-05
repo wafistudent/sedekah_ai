@@ -11,20 +11,22 @@
     </div>
 
     {{-- Current PIN Balance Alert --}}
-    <div class="rounded-lg border border-blue-200 bg-blue-50 p-4">
+    <div class="rounded-lg border border-blue-200 bg-blue-50 p-4 transition-opacity">
         <div class="flex">
             <div class="flex-shrink-0">
                 <svg class="h-5 w-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"/>
                     <path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd"/>
                 </svg>
             </div>
             <div class="ml-3">
                 <p class="text-sm text-blue-800">
-                    Pin yang tersisa: <span class="font-semibold">{{ $currentBalance }}</span> PIN
+                    PIN yang tersisa: <span class="font-semibold">{{ $currentBalance }}</span> PIN
                     @if($currentBalance < 1)
-                        <span class="ml-2 text-red-600">(Insufficient balance to register a member)</span>
+                        <span class="ml-2 text-red-600">(Saldo tidak cukup untuk registrasi reguler)</span>
                     @endif
+                </p>
+                <p class="text-xs text-blue-600 mt-1">
+                    💡 Punya Marketing PIN? Scroll ke bawah untuk menggunakan Marketing PIN tanpa memotong saldo Anda.
                 </p>
             </div>
         </div>
@@ -194,25 +196,59 @@
                 </select>
                 @if($upline)
                     <input type="hidden" name="upline_id" value="{{ $upline->id }}">
-                    {{-- <p class="mt-1 text-sm text-gray-500">Pre-selected from network tree</p> --}}
                 @endif
                 @error('upline_id')
                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                 @enderror
             </div>
+        </div>
 
-            <div class="flex items-center">
+        {{-- Marketing PIN Section --}}
+        <div class="space-y-4 border-t pt-6">
+            <h3 class="text-lg font-medium text-gray-900">
+                Marketing PIN (Opsional)
+            </h3>
+            <p class="text-sm text-gray-600">
+                Jika Anda memiliki kode Marketing PIN, masukkan di bawah ini. 
+                <span class="font-semibold text-green-600">Registrasi tidak akan memotong PIN reguler Anda.</span>
+            </p>
+
+            <div>
+                <label for="marketing_pin_code" class="block text-sm font-medium text-gray-700">
+                    Kode Marketing PIN
+                </label>
                 <input 
-                    type="checkbox" 
-                    name="is_marketing" 
-                    id="is_marketing" 
-                    value="1"
-                    {{ old('is_marketing') ? 'checked' : '' }}
-                    class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 hidden"
+                    type="text" 
+                    name="marketing_pin_code" 
+                    id="marketing_pin_code" 
+                    maxlength="8"
+                    placeholder="sedXXXXX"
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-base uppercase"
+                    value="{{ old('marketing_pin_code') }}"
                 >
-                {{-- <label for="is_marketing" class="ml-2 block text-sm text-gray-900">
-                    Marketing Member (stops upward commission distribution)
-                </label> --}}
+                <p class="mt-1 text-xs text-gray-500">
+                    Format: sedXXXXX (8 karakter). Kosongkan jika tidak memiliki Marketing PIN.
+                </p>
+                @error('marketing_pin_code')
+                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                @enderror
+            </div>
+
+            {{-- Visual indicator when marketing PIN is entered --}}
+            <div id="marketing-pin-indicator" class="hidden rounded-md bg-green-50 border border-green-200 p-3">
+                <div class="flex items-center">
+                    <svg class="h-5 w-5 text-green-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                    </svg>
+                    <div class="ml-3">
+                        <p class="text-sm text-green-700 font-medium">
+                            Mode Marketing PIN Aktif
+                        </p>
+                        <p class="text-xs text-green-600 mt-1">
+                            Registrasi akan menggunakan Marketing PIN, tidak akan memotong PIN reguler Anda.
+                        </p>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -223,7 +259,7 @@
             </a>
             <button 
                 type="submit" 
-                :disabled="hasErrors() || {{ $currentBalance }} < 1"
+                id="submit-button"
                 class="inline-flex items-center justify-center rounded-md bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
             >
                 Register Member (1 PIN)
@@ -231,4 +267,53 @@
         </div>
     </form>
 </div>
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const marketingPinInput = document.getElementById('marketing_pin_code');
+    const indicator = document.getElementById('marketing-pin-indicator');
+    const pinBalanceAlert = document.querySelector('.bg-blue-50'); // Existing PIN balance alert
+    const submitButton = document.getElementById('submit-button');
+    const currentBalance = {{ $currentBalance }};
+    
+    if (marketingPinInput) {
+        marketingPinInput.addEventListener('input', function(e) {
+            // Auto uppercase
+            e.target.value = e.target.value.toUpperCase();
+            
+            // Show/hide indicator
+            if (e.target.value.length > 0) {
+                indicator.classList.remove('hidden');
+                
+                // Dim the PIN balance alert if marketing PIN is entered
+                if (pinBalanceAlert) {
+                    pinBalanceAlert.classList.add('opacity-50');
+                }
+                
+                // Enable submit button when marketing PIN is entered
+                submitButton.disabled = false;
+                submitButton.textContent = 'Register Member (Marketing PIN)';
+            } else {
+                indicator.classList.add('hidden');
+                
+                // Restore PIN balance alert opacity
+                if (pinBalanceAlert) {
+                    pinBalanceAlert.classList.remove('opacity-50');
+                }
+                
+                // Check regular PIN balance
+                submitButton.disabled = currentBalance < 1;
+                submitButton.textContent = 'Register Member (1 PIN)';
+            }
+        });
+        
+        // Set initial state based on current balance
+        if (currentBalance < 1 && !marketingPinInput.value) {
+            submitButton.disabled = true;
+        }
+    }
+});
+</script>
+@endpush
 @endsection

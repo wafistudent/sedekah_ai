@@ -12,6 +12,7 @@ Multi-Level Marketing (MLM) application with PIN-based registration system, flex
 ## Features
 
 - PIN-based registration system (purchase, transfer, redemption)
+- Marketing PIN system for special registrations (no PIN deduction, no commission)
 - Flexible network hierarchy with sponsor and upline placement
 - 8-level commission distribution system
 - Marketing member logic (stops upward commission but receives downward)
@@ -114,6 +115,17 @@ php artisan db:seed
 - Primary Key: `id` (UUID)
 - Tracks withdrawal requests with approval workflow
 
+### Marketing Pins Table
+- Primary Key: `id` (UUID)
+- Stores marketing PIN codes for special registration
+- Format: `sedXXXX` (4 random alphanumeric characters)
+- Fields:
+  - `admin_id`: Admin who generated the PIN
+  - `designated_member_id`: Optional tracking field
+  - `redeemed_by_member_id`: Member who used this PIN
+  - `status`: active, used, expired
+  - `expired_at`: Optional expiration date
+
 ### App Settings Table
 - Primary Key: `key` (string)
 - Stores application-wide settings with type casting
@@ -135,6 +147,22 @@ $pinService->transferPin($fromMemberId, $toMemberId, $points);
 **Redemption**: Sponsor redeems 1 PIN to register a new member
 ```php
 $pinService->reedemPin($sponsorId, $newMemberData, $uplineId);
+```
+
+**Marketing PIN Registration**: Admin generates special PINs for marketing member registration (no PIN deduction, no commission)
+```php
+// Generate marketing PIN
+$marketingPinService = app(MarketingPinService::class);
+$pin = $marketingPinService->generatePin($adminId);
+
+// Register member using marketing PIN
+$newMember = $pinService->reedemPin(
+    sponsorId: $sponsorId,
+    newMemberData: $memberData,
+    uplineId: $uplineId,
+    isMarketing: true,
+    marketingPinCode: $pin->code
+);
 ```
 
 ### Network Hierarchy
@@ -251,6 +279,12 @@ $canWithdraw = $walletService->canWithdraw($userId, $amount);
 - `getBalance(string $userId): float`
 - `canWithdraw(string $userId, float $amount): bool`
 
+### MarketingPinService
+- `generatePin(string $adminId, ?string $designatedMemberId, ?string $expiredAt): MarketingPin`
+- `generateBulkPins(string $adminId, int $quantity, ?string $designatedMemberId, ?string $expiredAt): array`
+- `validatePin(string $code): array`
+- `usePin(string $code, string $newMemberId): bool`
+
 ## Usage Examples
 
 ### Register a New Member
@@ -295,6 +329,56 @@ use App\Services\WalletService;
 $walletService = app(WalletService::class);
 
 $balance = $walletService->getBalance('member_username');
+```
+
+### Generate and Use Marketing PINs
+
+```php
+use App\Services\MarketingPinService;
+use App\Services\PinService;
+
+$marketingPinService = app(MarketingPinService::class);
+$pinService = app(PinService::class);
+
+// Generate a single marketing PIN
+$pin = $marketingPinService->generatePin(
+    adminId: 'admin',
+    designatedMemberId: null, // optional tracking
+    expiredAt: null // optional expiration date
+);
+echo "Generated PIN: {$pin->code}";
+
+// Generate bulk marketing PINs
+$pins = $marketingPinService->generateBulkPins(
+    adminId: 'admin',
+    quantity: 10
+);
+
+// Validate a marketing PIN
+$validation = $marketingPinService->validatePin('sedABCD');
+if ($validation['valid']) {
+    echo "PIN is valid!";
+}
+
+// Register a member using marketing PIN
+$newMember = $pinService->reedemPin(
+    sponsorId: 'sponsor_username',
+    newMemberData: [
+        'id' => 'newmarketing123',
+        'email' => 'marketing@example.com',
+        'password' => 'password',
+        'name' => 'Marketing Member',
+        'phone' => '081234567890',
+        'dana_name' => 'Marketing Member',
+        'dana_number' => '081234567890',
+        'is_marketing' => true,
+    ],
+    uplineId: 'upline_username',
+    isMarketing: true,
+    marketingPinCode: $pin->code
+);
+// Note: This will NOT deduct PIN from sponsor
+// Note: This will NOT distribute commission to uplines
 ```
 
 ## Configuration
