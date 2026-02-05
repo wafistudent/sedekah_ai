@@ -97,7 +97,7 @@ class MarketingPin extends Model
         do {
             // Generate 4 random alphanumeric characters (uppercase)
             $random = strtoupper(Str::random(4));
-            $code = 'sed' . $random;
+            $code = 'SED' . $random;
         } while (self::where('code', $code)->exists());
 
         return $code;

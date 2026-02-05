@@ -133,7 +133,7 @@ class PinController extends Controller
             // Validate marketing PIN if provided
             if ($isMarketing) {
                 $request->validate([
-                    'marketing_pin_code' => 'required|string|size:8|exists:marketing_pins,code',
+                    'marketing_pin_code' => 'required|string|exists:marketing_pins,code',
                 ]);
             }
             
