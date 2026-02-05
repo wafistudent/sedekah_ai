@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full !font-sans">
 
 <head>
     <meta charset="utf-8">
@@ -83,7 +83,7 @@
     <!-- Apply dark mode immediately to prevent flash -->
 </head>
 
-<body class="font-sans" x-data="{ 'loaded': true }" x-init="$store.sidebar.isExpanded = window.innerWidth >= 1280;
+<body class="" x-data="{ 'loaded': true }" x-init="$store.sidebar.isExpanded = window.innerWidth >= 1280;
 const checkMobile = () => {
     if (window.innerWidth < 1280) {
         $store.sidebar.setMobileOpen(false);

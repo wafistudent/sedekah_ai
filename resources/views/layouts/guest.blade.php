@@ -14,7 +14,7 @@
     {{-- Vite Assets --}}
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="bg-gray-50 font-sans antialiased">
+<body class="bg-gray-50 antialiased">
     <div class="min-h-screen">
         {{-- Navigation --}}
         <nav class="bg-white shadow-sm">
