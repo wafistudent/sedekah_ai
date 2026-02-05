@@ -10,6 +10,7 @@ use App\Http\Controllers\MemberController;
 use App\Http\Controllers\PinController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\WalletController;
+use App\Http\Controllers\WhatsappController;
 use App\Http\Controllers\WithdrawalController;
 use Illuminate\Support\Facades\Route;
 
@@ -58,6 +59,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/materials', [MaterialController::class, 'index'])->name('materials.index');
     Route::get('/materials/{id}', [MaterialController::class, 'show'])->name('materials.show');
     Route::post('/materials/{id}/complete', [MaterialController::class, 'complete'])->name('materials.complete');
+
+    Route::get('wa-health', [WhatsappController::class, 'index']);
+    Route::get('wa-check', [WhatsappController::class, 'numberCheck']);
 
     // Admin routes (with role middleware)
     Route::middleware(['role:admin'])->prefix('admin')->name('admin.')->group(function () {
