@@ -23,5 +23,6 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withProviders([
         \App\Providers\WhatsappServiceProvider::class,
+        \App\Providers\EventServiceProvider::class,
     ])
     ->create();

@@ -96,13 +96,27 @@ class WalletController extends Controller
 
         try {
             // Create withdrawal request
-            WithdrawalRequest::create([
+            // Note: bank_account stores formatted string for display purposes
+            // The actual account details are in user's dana_name and dana_number fields
+            $withdrawal = WithdrawalRequest::create([
                 'user_id' => $user->id,
                 'amount' => $amount,
-                'dana_name' => $user->dana_name,
-                'dana_number' => $user->dana_number,
+                'bank_account' => "DANA - {$user->dana_name} ({$user->dana_number})",
                 'status' => 'pending',
+                'requested_at' => now(),
             ]);
+
+            // Fire WithdrawalRequested event with structured bankInfo
+            event(new \App\Events\WithdrawalRequested(
+                member: $user,
+                withdrawal: $withdrawal,
+                amount: $amount,
+                bankInfo: [
+                    'bank_name' => 'DANA',
+                    'account_number' => $user->dana_number,
+                    'account_name' => $user->dana_name,
+                ]
+            ));
 
             return redirect()->route('withdrawals.my-requests')
                 ->with('success', 'Withdrawal request submitted successfully');

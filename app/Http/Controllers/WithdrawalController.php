@@ -97,6 +97,13 @@ class WithdrawalController extends Controller
                 'processed_by' => auth()->id(),
             ]);
 
+            // Fire WithdrawalApproved event
+            event(new \App\Events\WithdrawalApproved(
+                member: $withdrawal->user,
+                withdrawal: $withdrawal,
+                admin: auth()->user()
+            ));
+
             return redirect()->back()
                 ->with('success', 'Withdrawal request approved successfully');
         } catch (Exception $e) {
@@ -127,6 +134,14 @@ class WithdrawalController extends Controller
                 'processed_at' => now(),
                 'processed_by' => auth()->id(),
             ]);
+
+            // Fire WithdrawalRejected event
+            event(new \App\Events\WithdrawalRejected(
+                member: $withdrawal->user,
+                withdrawal: $withdrawal,
+                admin: auth()->user(),
+                reason: 'Alasan tidak disebutkan' // Default reason if not provided
+            ));
 
             return redirect()->back()
                 ->with('success', 'Withdrawal request rejected');

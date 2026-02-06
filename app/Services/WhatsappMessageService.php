@@ -81,7 +81,9 @@ class WhatsappMessageService
                 'max_retry' => WhatsappSetting::getValue('max_retry_attempts', 3),
             ]);
 
-            // TODO Phase 3: Dispatch SendWhatsappMessage::dispatch($log->id)->delay(...)
+            // Dispatch to queue with delay
+            $delay = WhatsappSetting::getValue('message_delay_seconds', 3);
+            \App\Jobs\SendWhatsappMessage::dispatch($log->id)->delay(now()->addSeconds($delay));
 
             return $log;
         } catch (\Exception $e) {

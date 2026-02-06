@@ -96,7 +96,7 @@ class WalletService
             $wallet->save();
 
             // Create transaction record
-            return WalletTransaction::create([
+            $transaction = WalletTransaction::create([
                 'wallet_id' => $wallet->id,
                 'type' => 'credit',
                 'amount' => $amount,
@@ -108,6 +108,24 @@ class WalletService
                 'level' => $level,
                 'description' => $description,
             ]);
+
+            // Fire CommissionReceived event if this is a commission credit
+            if ($referenceType === 'commission') {
+                $member = User::find($userId);
+                $fromMember = $fromMemberId ? User::find($fromMemberId) : null;
+                
+                if ($member) {
+                    event(new \App\Events\CommissionReceived(
+                        member: $member,
+                        commission: $transaction,
+                        amount: $amount,
+                        type: $description ?? "Commission Level {$level}",
+                        fromMember: $fromMember
+                    ));
+                }
+            }
+
+            return $transaction;
         });
     }
 
