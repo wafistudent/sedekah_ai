@@ -290,12 +290,14 @@ window.whatsappPreview = function(initialContent = '', dummyData = {}) {
                 .replace(/</g, '&lt;')
                 .replace(/>/g, '&gt;');
             
+            // Convert newlines to <br> first
+            text = text.replace(/\n/g, '<br>');
+            
             // Then parse markdown
             text = text.replace(/\*([^*]+)\*/g, '<strong>$1</strong>');
             text = text.replace(/_([^_]+)_/g, '<em>$1</em>');
             text = text.replace(/~([^~]+)~/g, '<del>$1</del>');
             text = text.replace(/```([^`]+)```/g, '<code>$1</code>');
-            text = text.replace(/\n/g, '<br>');
             
             return text;
         }
