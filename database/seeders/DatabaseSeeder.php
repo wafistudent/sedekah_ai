@@ -25,6 +25,8 @@ class DatabaseSeeder extends Seeder
             AdminSeeder::class,
             CommissionConfigSeeder::class,
             AppSettingSeeder::class,
+            WhatsappSettingSeeder::class,
+            WhatsappTemplateSeeder::class,
         ]);
     }
 }
