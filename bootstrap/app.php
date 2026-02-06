@@ -3,7 +3,6 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
-use Illuminate\Support\Facades\Event;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -24,30 +23,6 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withProviders([
         \App\Providers\WhatsappServiceProvider::class,
+        \App\Providers\EventServiceProvider::class,
     ])
-    ->withEvents(discover: [
-        __DIR__.'/../app/Listeners',
-    ], then: function () {
-        // Register event-listener mappings
-        Event::listen(
-            \App\Events\MemberRegistered::class,
-            \App\Listeners\SendWhatsappNotification::class,
-        );
-        Event::listen(
-            \App\Events\CommissionReceived::class,
-            \App\Listeners\SendWhatsappNotification::class,
-        );
-        Event::listen(
-            \App\Events\WithdrawalRequested::class,
-            \App\Listeners\SendWhatsappNotification::class,
-        );
-        Event::listen(
-            \App\Events\WithdrawalApproved::class,
-            \App\Listeners\SendWhatsappNotification::class,
-        );
-        Event::listen(
-            \App\Events\WithdrawalRejected::class,
-            \App\Listeners\SendWhatsappNotification::class,
-        );
-    })
     ->create();
