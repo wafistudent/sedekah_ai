@@ -11,8 +11,6 @@ use Illuminate\Support\Facades\Log;
  * WhatsappSettingController
  *
  * Handle WhatsApp settings management
- *
- * @package App\Http\Controllers\Admin
  */
 class WhatsappSettingController extends Controller
 {
@@ -35,14 +33,13 @@ class WhatsappSettingController extends Controller
 
             return redirect()
                 ->back()
-                ->with('error', 'Terjadi kesalahan saat mengambil data pengaturan: ' . $e->getMessage());
+                ->with('error', 'Terjadi kesalahan saat mengambil data pengaturan: '.$e->getMessage());
         }
     }
 
     /**
      * Save settings
      *
-     * @param UpdateWhatsappSettingRequest $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function update(UpdateWhatsappSettingRequest $request)
@@ -81,7 +78,7 @@ class WhatsappSettingController extends Controller
             return redirect()
                 ->back()
                 ->withInput()
-                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+                ->with('error', 'Terjadi kesalahan: '.$e->getMessage());
         }
     }
 }

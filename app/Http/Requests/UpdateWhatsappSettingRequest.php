@@ -8,15 +8,11 @@ use Illuminate\Foundation\Http\FormRequest;
  * UpdateWhatsappSettingRequest
  *
  * Form request for updating WhatsApp settings
- *
- * @package App\Http\Requests
  */
 class UpdateWhatsappSettingRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request
-     *
-     * @return bool
      */
     public function authorize(): bool
     {
@@ -25,8 +21,6 @@ class UpdateWhatsappSettingRequest extends FormRequest
 
     /**
      * Get the validation rules that apply to the request
-     *
-     * @return array
      */
     public function rules(): array
     {
@@ -43,8 +37,6 @@ class UpdateWhatsappSettingRequest extends FormRequest
 
     /**
      * Get custom validation error messages
-     *
-     * @return array
      */
     public function messages(): array
     {

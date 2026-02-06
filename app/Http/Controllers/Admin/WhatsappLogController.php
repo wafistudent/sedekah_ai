@@ -13,8 +13,6 @@ use Illuminate\Support\Facades\Log;
  * WhatsappLogController
  *
  * Handle WhatsApp log operations: view logs, resend messages
- *
- * @package App\Http\Controllers\Admin
  */
 class WhatsappLogController extends Controller
 {
@@ -25,8 +23,6 @@ class WhatsappLogController extends Controller
 
     /**
      * WhatsappLogController constructor
-     *
-     * @param WhatsappLogService $logService
      */
     public function __construct(WhatsappLogService $logService)
     {
@@ -36,7 +32,6 @@ class WhatsappLogController extends Controller
     /**
      * Display logs with filters and stats
      *
-     * @param Request $request
      * @return \Illuminate\View\View
      */
     public function index(Request $request)
@@ -94,14 +89,13 @@ class WhatsappLogController extends Controller
 
             return redirect()
                 ->back()
-                ->with('error', 'Terjadi kesalahan saat mengambil data log: ' . $e->getMessage());
+                ->with('error', 'Terjadi kesalahan saat mengambil data log: '.$e->getMessage());
         }
     }
 
     /**
      * Display single log detail
      *
-     * @param WhatsappLog $log
      * @return \Illuminate\View\View
      */
     public function show(WhatsappLog $log)
@@ -131,20 +125,19 @@ class WhatsappLogController extends Controller
 
             return redirect()
                 ->route('admin.whatsapp.logs.index')
-                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+                ->with('error', 'Terjadi kesalahan: '.$e->getMessage());
         }
     }
 
     /**
      * Manually resend single log
      *
-     * @param WhatsappLog $log
      * @return \Illuminate\Http\RedirectResponse
      */
     public function resend(WhatsappLog $log)
     {
         try {
-            if (!in_array($log->status, ['failed'])) {
+            if (! in_array($log->status, ['failed'])) {
                 return redirect()
                     ->back()
                     ->with('error', 'Hanya pesan dengan status "failed" yang bisa di-resend.');
@@ -170,14 +163,13 @@ class WhatsappLogController extends Controller
 
             return redirect()
                 ->back()
-                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+                ->with('error', 'Terjadi kesalahan: '.$e->getMessage());
         }
     }
 
     /**
      * Resend multiple logs at once
      *
-     * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function bulkResend(Request $request)
@@ -186,7 +178,7 @@ class WhatsappLogController extends Controller
             // Validate input
             $request->validate([
                 'log_ids' => 'required|array|min:1',
-                'log_ids.*' => 'exists:whatsapp_logs,id'
+                'log_ids.*' => 'exists:whatsapp_logs,id',
             ]);
 
             // Resend
@@ -200,7 +192,7 @@ class WhatsappLogController extends Controller
         } catch (\Illuminate\Validation\ValidationException $e) {
             return redirect()
                 ->back()
-                ->with('error', 'Validasi gagal: ' . implode(', ', $e->errors()));
+                ->with('error', 'Validasi gagal: '.implode(', ', $e->errors()));
         } catch (\Exception $e) {
             Log::error('[WhatsApp Log] Failed to bulk resend', [
                 'error' => $e->getMessage(),
@@ -209,7 +201,7 @@ class WhatsappLogController extends Controller
 
             return redirect()
                 ->back()
-                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+                ->with('error', 'Terjadi kesalahan: '.$e->getMessage());
         }
     }
 }

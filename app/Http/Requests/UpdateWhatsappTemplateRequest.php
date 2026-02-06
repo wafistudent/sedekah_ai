@@ -9,15 +9,11 @@ use Illuminate\Foundation\Http\FormRequest;
  * UpdateWhatsappTemplateRequest
  *
  * Form request for updating an existing WhatsApp template
- *
- * @package App\Http\Requests
  */
 class UpdateWhatsappTemplateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request
-     *
-     * @return bool
      */
     public function authorize(): bool
     {
@@ -26,8 +22,6 @@ class UpdateWhatsappTemplateRequest extends FormRequest
 
     /**
      * Get the validation rules that apply to the request
-     *
-     * @return array
      */
     public function rules(): array
     {
@@ -37,7 +31,7 @@ class UpdateWhatsappTemplateRequest extends FormRequest
                 'string',
                 'max:100',
                 'regex:/^[a-z0-9_]+$/',
-                'unique:whatsapp_templates,code,' . $this->route('template')->id
+                'unique:whatsapp_templates,code,'.$this->route('template')->id,
             ],
             'name' => 'required|string|max:255',
             'category' => 'required|in:member,commission,withdrawal,admin,general',
@@ -49,8 +43,6 @@ class UpdateWhatsappTemplateRequest extends FormRequest
 
     /**
      * Get custom validation error messages
-     *
-     * @return array
      */
     public function messages(): array
     {
@@ -70,7 +62,7 @@ class UpdateWhatsappTemplateRequest extends FormRequest
     /**
      * Configure the validator instance with custom validation
      *
-     * @param \Illuminate\Validation\Validator $validator
+     * @param  \Illuminate\Validation\Validator  $validator
      * @return void
      */
     public function withValidator($validator)
@@ -88,7 +80,7 @@ class UpdateWhatsappTemplateRequest extends FormRequest
                     $availableVars
                 );
 
-                if (!$validation['valid']) {
+                if (! $validation['valid']) {
                     $invalidVars = implode(', ', $validation['invalid_variables']);
                     $validator->errors()->add(
                         'content',

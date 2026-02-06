@@ -15,8 +15,6 @@ use Illuminate\Support\Facades\Log;
  * WhatsappTemplateController
  *
  * Handle all WhatsApp template CRUD operations
- *
- * @package App\Http\Controllers\Admin
  */
 class WhatsappTemplateController extends Controller
 {
@@ -27,8 +25,6 @@ class WhatsappTemplateController extends Controller
 
     /**
      * WhatsappTemplateController constructor
-     *
-     * @param WhatsappTemplateService $templateService
      */
     public function __construct(WhatsappTemplateService $templateService)
     {
@@ -38,7 +34,6 @@ class WhatsappTemplateController extends Controller
     /**
      * Display a listing of WhatsApp templates with filters
      *
-     * @param Request $request
      * @return \Illuminate\View\View
      */
     public function index(Request $request)
@@ -80,7 +75,7 @@ class WhatsappTemplateController extends Controller
 
             return redirect()
                 ->back()
-                ->with('error', 'Terjadi kesalahan saat mengambil data template: ' . $e->getMessage());
+                ->with('error', 'Terjadi kesalahan saat mengambil data template: '.$e->getMessage());
         }
     }
 
@@ -93,6 +88,7 @@ class WhatsappTemplateController extends Controller
     {
         try {
             $categories = ['member', 'commission', 'withdrawal', 'admin', 'general'];
+
             return view('admin.whatsapp.templates.create', compact('categories'));
         } catch (\Exception $e) {
             Log::error('[WhatsApp Template] Failed to show create form', [
@@ -102,14 +98,13 @@ class WhatsappTemplateController extends Controller
 
             return redirect()
                 ->route('admin.whatsapp.templates.index')
-                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+                ->with('error', 'Terjadi kesalahan: '.$e->getMessage());
         }
     }
 
     /**
      * Validate and save new template
      *
-     * @param StoreWhatsappTemplateRequest $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function store(StoreWhatsappTemplateRequest $request)
@@ -139,14 +134,13 @@ class WhatsappTemplateController extends Controller
             return redirect()
                 ->back()
                 ->withInput()
-                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+                ->with('error', 'Terjadi kesalahan: '.$e->getMessage());
         }
     }
 
     /**
      * Display template detail (read-only view)
      *
-     * @param WhatsappTemplate $template
      * @return \Illuminate\View\View
      */
     public function show(WhatsappTemplate $template)
@@ -160,7 +154,7 @@ class WhatsappTemplateController extends Controller
                 },
                 'logs as failed_count' => function ($q) {
                     $q->where('status', 'failed');
-                }
+                },
             ]);
 
             $successRate = $template->logs_count > 0
@@ -177,20 +171,20 @@ class WhatsappTemplateController extends Controller
 
             return redirect()
                 ->route('admin.whatsapp.templates.index')
-                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+                ->with('error', 'Terjadi kesalahan: '.$e->getMessage());
         }
     }
 
     /**
      * Show form to edit template
      *
-     * @param WhatsappTemplate $template
      * @return \Illuminate\View\View
      */
     public function edit(WhatsappTemplate $template)
     {
         try {
             $categories = ['member', 'commission', 'withdrawal', 'admin', 'general'];
+
             return view('admin.whatsapp.templates.edit', compact('template', 'categories'));
         } catch (\Exception $e) {
             Log::error('[WhatsApp Template] Failed to show edit form', [
@@ -201,15 +195,13 @@ class WhatsappTemplateController extends Controller
 
             return redirect()
                 ->route('admin.whatsapp.templates.index')
-                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+                ->with('error', 'Terjadi kesalahan: '.$e->getMessage());
         }
     }
 
     /**
      * Validate and update template
      *
-     * @param UpdateWhatsappTemplateRequest $request
-     * @param WhatsappTemplate $template
      * @return \Illuminate\Http\RedirectResponse
      */
     public function update(UpdateWhatsappTemplateRequest $request, WhatsappTemplate $template)
@@ -238,14 +230,13 @@ class WhatsappTemplateController extends Controller
             return redirect()
                 ->back()
                 ->withInput()
-                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+                ->with('error', 'Terjadi kesalahan: '.$e->getMessage());
         }
     }
 
     /**
      * Soft delete template
      *
-     * @param WhatsappTemplate $template
      * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy(WhatsappTemplate $template)
@@ -276,22 +267,21 @@ class WhatsappTemplateController extends Controller
 
             return redirect()
                 ->back()
-                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+                ->with('error', 'Terjadi kesalahan: '.$e->getMessage());
         }
     }
 
     /**
      * Clone existing template
      *
-     * @param WhatsappTemplate $template
      * @return \Illuminate\Http\RedirectResponse
      */
     public function duplicate(WhatsappTemplate $template)
     {
         try {
             $newTemplate = $template->replicate();
-            $newTemplate->code = $template->code . '_copy';
-            $newTemplate->name = $template->name . ' (Copy)';
+            $newTemplate->code = $template->code.'_copy';
+            $newTemplate->name = $template->name.' (Copy)';
             $newTemplate->is_active = false;
             $newTemplate->created_by = auth()->id();
             $newTemplate->created_at = now();
@@ -309,14 +299,13 @@ class WhatsappTemplateController extends Controller
 
             return redirect()
                 ->back()
-                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+                ->with('error', 'Terjadi kesalahan: '.$e->getMessage());
         }
     }
 
     /**
      * Send test WhatsApp message (AJAX endpoint)
      *
-     * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function testSend(Request $request)
@@ -346,18 +335,18 @@ class WhatsappTemplateController extends Controller
             if ($result['success']) {
                 return response()->json([
                     'success' => true,
-                    'message' => 'Pesan test berhasil dikirim ke ' . $request->phone,
+                    'message' => 'Pesan test berhasil dikirim ke '.$request->phone,
                 ]);
             }
 
             return response()->json([
                 'success' => false,
-                'message' => 'Gagal mengirim pesan: ' . ($result['error'] ?? 'Unknown error'),
+                'message' => 'Gagal mengirim pesan: '.($result['error'] ?? 'Unknown error'),
             ], 400);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Validasi gagal: ' . implode(', ', $e->errors()),
+                'message' => 'Validasi gagal: '.implode(', ', $e->errors()),
             ], 422);
         } catch (\Exception $e) {
             Log::error('[WhatsApp Template] Failed to send test message', [
@@ -367,20 +356,18 @@ class WhatsappTemplateController extends Controller
 
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan: ' . $e->getMessage(),
+                'message' => 'Terjadi kesalahan: '.$e->getMessage(),
             ], 500);
         }
     }
 
     /**
      * Extract variables from content for storage
-     *
-     * @param string $content
-     * @return array
      */
     protected function extractVariables(string $content): array
     {
         preg_match_all('/\{\{([^}]+)\}\}/', $content, $matches);
+
         return array_unique($matches[1] ?? []);
     }
 }
