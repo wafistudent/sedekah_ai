@@ -77,10 +77,18 @@ class SendWhatsappNotification
         $sponsor = $event->sponsor;
         $upline = $event->upline;
 
+        // Skip if user has no phone number
+        if (empty($user->phone)) {
+            Log::warning("[WhatsApp Listener] Cannot send welcome message - no phone number", [
+                'user_id' => $user->id,
+            ]);
+            return;
+        }
+
         // Prepare data for template
         $data = [
             'name' => $user->name,
-            'username' => $user->username ?? $user->email,
+            'username' => $user->id, // User ID is the username
             'email' => $user->email,
             'phone' => $user->phone,
             'sponsor_name' => $sponsor?->name ?? '-',
@@ -122,13 +130,25 @@ class SendWhatsappNotification
         $type = $event->type;
         $fromMember = $event->fromMember;
 
+        // Skip if member has no phone number
+        if (empty($member->phone)) {
+            Log::warning("[WhatsApp Listener] Cannot send commission notification - no phone number", [
+                'user_id' => $member->id,
+            ]);
+            return;
+        }
+
+        // Get balance from wallet
+        $wallet = \App\Models\Wallet::where('user_id', $member->id)->first();
+        $balance = $wallet ? $wallet->balance : 0;
+
         $data = [
             'name' => $member->name,
             'amount' => 'Rp ' . number_format($amount, 0, ',', '.'),
             'commission_type' => $type,
             'from_member' => $fromMember?->name ?? '-',
             'date' => now()->format('d-m-Y H:i'),
-            'balance' => 'Rp ' . number_format($member->balance ?? 0, 0, ',', '.'),
+            'balance' => 'Rp ' . number_format($balance, 0, ',', '.'),
         ];
 
         $metadata = [
@@ -161,6 +181,14 @@ class SendWhatsappNotification
         $member = $event->member;
         $withdrawal = $event->withdrawal;
         $bankInfo = $event->bankInfo;
+
+        // Skip if member has no phone number
+        if (empty($member->phone)) {
+            Log::warning("[WhatsApp Listener] Cannot send withdrawal request notification - no phone number", [
+                'user_id' => $member->id,
+            ]);
+            return;
+        }
 
         $data = [
             'name' => $member->name,
@@ -201,6 +229,14 @@ class SendWhatsappNotification
         $member = $event->member;
         $withdrawal = $event->withdrawal;
         $admin = $event->admin;
+
+        // Skip if member has no phone number
+        if (empty($member->phone)) {
+            Log::warning("[WhatsApp Listener] Cannot send withdrawal approved notification - no phone number", [
+                'user_id' => $member->id,
+            ]);
+            return;
+        }
 
         $data = [
             'name' => $member->name,
@@ -244,6 +280,14 @@ class SendWhatsappNotification
         $withdrawal = $event->withdrawal;
         $admin = $event->admin;
         $reason = $event->reason;
+
+        // Skip if member has no phone number
+        if (empty($member->phone)) {
+            Log::warning("[WhatsApp Listener] Cannot send withdrawal rejected notification - no phone number", [
+                'user_id' => $member->id,
+            ]);
+            return;
+        }
 
         $data = [
             'name' => $member->name,
