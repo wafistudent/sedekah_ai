@@ -98,13 +98,19 @@ window.whatsappEditor = function() {
     return {
         content: '',
         category: 'member',
-        availableVariables: {
-            member: ['name', 'username', 'email', 'phone'],
-            commission: ['name', 'username', 'email', 'phone', 'amount', 'commission_type'],
-            withdrawal: ['name', 'username', 'email', 'phone', 'amount', 'status'],
-            general: ['name', 'username', 'email', 'phone']
-        },
+        availableVariables: {},
         variablesValid: true,
+        
+        init() {
+            this.loadVariables();
+        },
+        
+        loadVariables() {
+            // Get variables by category from config
+            const allVariables = window.whatsappDummyData || {};
+            this.availableVariables = allVariables[this.category] || {};
+            this.validateVariables();
+        },
         
         /**
          * Insert variable at cursor position
@@ -113,7 +119,9 @@ window.whatsappEditor = function() {
          * @returns {void}
          */
         insertVariable(variable) {
-            const textarea = document.getElementById('content');
+            const textarea = this.$refs.textarea || document.getElementById('whatsapp-content');
+            if (!textarea) return;
+            
             const start = textarea.selectionStart;
             const end = textarea.selectionEnd;
             const text = textarea.value;
@@ -129,6 +137,7 @@ window.whatsappEditor = function() {
             textarea.focus();
             
             this.updatePreview();
+            this.validateVariables();
         },
         
         /**
@@ -138,7 +147,9 @@ window.whatsappEditor = function() {
          * @returns {void}
          */
         wrapText(symbol) {
-            const textarea = document.getElementById('content');
+            const textarea = this.$refs.textarea || document.getElementById('whatsapp-content');
+            if (!textarea) return;
+            
             const start = textarea.selectionStart;
             const end = textarea.selectionEnd;
             const text = textarea.value;
@@ -165,7 +176,9 @@ window.whatsappEditor = function() {
          * @returns {void}
          */
         insertEmoji(emoji) {
-            const textarea = document.getElementById('content');
+            const textarea = this.$refs.textarea || document.getElementById('whatsapp-content');
+            if (!textarea) return;
+            
             const start = textarea.selectionStart;
             const end = textarea.selectionEnd;
             const text = textarea.value;
@@ -190,6 +203,19 @@ window.whatsappEditor = function() {
          */
         updatePreview() {
             this.$dispatch('preview-update', { content: this.content });
+        },
+        
+        /**
+         * Validate variables in content
+         * 
+         * @returns {void}
+         */
+        validateVariables() {
+            const matches = this.content.match(/\{\{([^}]+)\}\}/g) || [];
+            const usedVars = matches.map(m => m.replace(/[{}]/g, ''));
+            const validVars = Object.keys(this.availableVariables);
+            
+            this.variablesValid = usedVars.every(v => validVars.includes(v));
         }
     };
 };
@@ -252,23 +278,24 @@ window.whatsappPreview = function(initialContent = '', dummyData = {}) {
         },
         
         /**
-         * Convert WhatsApp markdown to HTML
+         * Convert WhatsApp markdown to HTML with XSS protection
          * 
          * @param {string} text - Text to parse
          * @returns {string} Parsed HTML
          */
         parseMarkdown(text) {
-            // Bold: *text*
+            // Escape HTML first (XSS protection)
+            text = text
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
+            
+            // Then parse markdown
             text = text.replace(/\*([^*]+)\*/g, '<strong>$1</strong>');
-            
-            // Italic: _text_
             text = text.replace(/_([^_]+)_/g, '<em>$1</em>');
-            
-            // Strikethrough: ~text~
             text = text.replace(/~([^~]+)~/g, '<del>$1</del>');
-            
-            // Monospace: ```text```
             text = text.replace(/```([^`]+)```/g, '<code>$1</code>');
+            text = text.replace(/\n/g, '<br>');
             
             return text;
         }
@@ -310,37 +337,39 @@ window.testSendModal = function() {
          */
         async sendTest() {
             if (!this.phone) {
-                alert('Please enter a phone number');
+                alert('Nomor HP wajib diisi');
                 return;
             }
             
             this.loading = true;
             
             try {
+                const content = document.querySelector('#whatsapp-content')?.value || '';
+                
                 const response = await fetch('/admin/whatsapp/templates/test-send', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+                        'Accept': 'application/json',
                     },
                     body: JSON.stringify({
                         phone: this.phone,
-                        test_data: this.testData,
-                        content: document.getElementById('content')?.value || ''
+                        content: content,
+                        test_data: this.testData
                     })
                 });
                 
                 const result = await response.json();
                 
                 if (result.success) {
-                    alert('Test message sent successfully!');
+                    this.$dispatch('show-toast', { type: 'success', message: result.message });
                     this.show = false;
                 } else {
-                    alert('Failed to send test message: ' + (result.message || 'Unknown error'));
+                    this.$dispatch('show-toast', { type: 'error', message: result.message });
                 }
             } catch (error) {
-                console.error('Error sending test message:', error);
-                alert('Failed to send test message. Please try again.');
+                this.$dispatch('show-toast', { type: 'error', message: 'Terjadi kesalahan: ' + error.message });
             } finally {
                 this.loading = false;
             }
@@ -443,10 +472,10 @@ window.toastNotification = function() {
         
         get bgClass() {
             const classes = {
-                success: 'bg-green-50 border-green-200',
-                error: 'bg-red-50 border-red-200',
-                warning: 'bg-yellow-50 border-yellow-200',
-                info: 'bg-blue-50 border-blue-200'
+                success: 'bg-green-50 border-green-200 text-green-800',
+                error: 'bg-red-50 border-red-200 text-red-800',
+                warning: 'bg-yellow-50 border-yellow-200 text-yellow-800',
+                info: 'bg-blue-50 border-blue-200 text-blue-800'
             };
             return classes[this.type] || classes.info;
         }

@@ -88,8 +88,9 @@ class WhatsappTemplateController extends Controller
     {
         try {
             $categories = ['member', 'commission', 'withdrawal', 'admin', 'general'];
+            $dummyData = config('whatsapp.dummy_data');
 
-            return view('admin.whatsapp.templates.create', compact('categories'));
+            return view('admin.whatsapp.templates.create', compact('categories', 'dummyData'));
         } catch (\Exception $e) {
             Log::error('[WhatsApp Template] Failed to show create form', [
                 'error' => $e->getMessage(),
@@ -184,8 +185,9 @@ class WhatsappTemplateController extends Controller
     {
         try {
             $categories = ['member', 'commission', 'withdrawal', 'admin', 'general'];
+            $dummyData = config('whatsapp.dummy_data');
 
-            return view('admin.whatsapp.templates.edit', compact('template', 'categories'));
+            return view('admin.whatsapp.templates.edit', compact('template', 'categories', 'dummyData'));
         } catch (\Exception $e) {
             Log::error('[WhatsApp Template] Failed to show edit form', [
                 'error' => $e->getMessage(),
