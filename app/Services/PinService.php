@@ -318,6 +318,13 @@ class PinService
                 $this->commissionService->calculateCommission($newUser->id);
             }
 
+            // Fire MemberRegistered event
+            event(new \App\Events\MemberRegistered(
+                user: $newUser,
+                sponsor: $sponsor,
+                upline: User::find($uplineId)
+            ));
+
             return $newUser;
         });
     }
