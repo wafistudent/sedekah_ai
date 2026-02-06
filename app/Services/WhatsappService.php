@@ -127,9 +127,7 @@ class WhatsappService
         try {
             $response = Http::withHeaders([
                 'apikey' => $this->apiKey,
-            ])->post($this->apiUrl . '/is_online', [
-                'apikey' => $this->apiKey,
-            ]);
+            ])->post($this->apiUrl . '/is_online');
 
             if (!$response->successful()) {
                 Log::warning('[WhatsApp] Health check failed', [
