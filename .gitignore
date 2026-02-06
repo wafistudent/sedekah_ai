@@ -24,3 +24,4 @@ npm-debug.log
 yarn-error.log
 /bootstrap/cache/*.php
 !/bootstrap/cache/.gitignore
+/public/build/
