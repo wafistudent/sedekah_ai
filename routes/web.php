@@ -2,6 +2,9 @@
 
 use App\Http\Controllers\Admin\MaterialController as AdminMaterialController;
 use App\Http\Controllers\Admin\MarketingPinController;
+use App\Http\Controllers\Admin\WhatsappLogController;
+use App\Http\Controllers\Admin\WhatsappSettingController;
+use App\Http\Controllers\Admin\WhatsappTemplateController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CommissionController;
 use App\Http\Controllers\DashboardController;
@@ -85,4 +88,34 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/marketing-pins', [MarketingPinController::class, 'store'])->name('marketing-pins.store');
         Route::get('/marketing-pins/{marketingPin}', [MarketingPinController::class, 'show'])->name('marketing-pins.show');
     });
+
+    // WhatsApp Auto Message Admin Panel
+    Route::prefix('admin/whatsapp')
+        ->middleware(['auth', 'role:admin'])
+        ->name('admin.whatsapp.')
+        ->group(function () {
+            
+            // Templates
+            Route::resource('templates', WhatsappTemplateController::class);
+            Route::post('templates/{template}/duplicate', [WhatsappTemplateController::class, 'duplicate'])
+                ->name('templates.duplicate');
+            Route::post('templates/test-send', [WhatsappTemplateController::class, 'testSend'])
+                ->name('templates.test-send');
+            
+            // Logs
+            Route::get('logs', [WhatsappLogController::class, 'index'])
+                ->name('logs.index');
+            Route::get('logs/{log}', [WhatsappLogController::class, 'show'])
+                ->name('logs.show');
+            Route::post('logs/{log}/resend', [WhatsappLogController::class, 'resend'])
+                ->name('logs.resend');
+            Route::post('logs/bulk-resend', [WhatsappLogController::class, 'bulkResend'])
+                ->name('logs.bulk-resend');
+            
+            // Settings
+            Route::get('settings', [WhatsappSettingController::class, 'index'])
+                ->name('settings.index');
+            Route::put('settings', [WhatsappSettingController::class, 'update'])
+                ->name('settings.update');
+        });
 });
