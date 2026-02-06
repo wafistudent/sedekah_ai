@@ -20,7 +20,7 @@ return new class extends Migration
             $table->text('content')->comment('Template content with {{variables}}');
             $table->json('variables')->nullable()->comment('Array of available variables');
             $table->boolean('is_active')->default(true)->comment('Is template active');
-            $table->unsignedBigInteger('created_by')->nullable()->comment('Foreign key to users(id)');
+            $table->string('created_by', 20)->nullable()->comment('Foreign key to users(id)');
             $table->timestamps();
             $table->softDeletes();
             

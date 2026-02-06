@@ -24,6 +24,6 @@ class WhatsappController
 
     public function numberCheck()
     {
-        dd($this->whatsappService->checkNumber())->json();
+        dd($this->whatsappService->checkNumber("628123456789"))->json();
     }
 }
