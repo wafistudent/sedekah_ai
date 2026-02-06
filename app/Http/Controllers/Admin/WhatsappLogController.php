@@ -72,8 +72,25 @@ class WhatsappLogController extends Controller
             // Paginate
             $logs = $query->paginate(50);
 
-            // Get stats
-            $stats = $this->logService->getStats('today');
+            // Optimized stats query (single query instead of multiple)
+            $statsData = WhatsappLog::whereDate('created_at', today())
+                ->selectRaw('
+                    COUNT(*) as total,
+                    SUM(CASE WHEN status = "sent" THEN 1 ELSE 0 END) as sent,
+                    SUM(CASE WHEN status = "failed" THEN 1 ELSE 0 END) as failed,
+                    SUM(CASE WHEN status IN ("pending", "queued") THEN 1 ELSE 0 END) as pending
+                ')
+                ->first();
+
+            $stats = [
+                'total' => $statsData->total ?? 0,
+                'sent' => $statsData->sent ?? 0,
+                'failed' => $statsData->failed ?? 0,
+                'pending' => $statsData->pending ?? 0,
+                'success_rate' => $statsData->total > 0
+                    ? round(($statsData->sent / $statsData->total) * 100, 2)
+                    : 0,
+            ];
 
             // Get templates for filter dropdown
             $templates = WhatsappTemplate::select('id', 'name')

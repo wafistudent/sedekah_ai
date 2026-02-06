@@ -84,12 +84,14 @@
         <label for="content" class="block text-sm font-medium text-gray-700 mb-2">Message Content</label>
         <textarea 
             name="content" 
-            id="content" 
+            id="whatsapp-content"
             rows="12"
             x-model="content"
             @input="updatePreview()"
+            x-ref="textarea"
             placeholder="Type your message here... Use variables like {{name}} and format with *bold*, _italic_, ~strikethrough~, ```monospace```"
             class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-base font-sans"
+            required
         >{{ $content }}</textarea>
     </div>
 

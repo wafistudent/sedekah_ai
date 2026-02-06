@@ -68,6 +68,7 @@
                         id="category" 
                         required
                         x-model="category"
+                        @change="loadVariables()"
                         class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
                     >
                         <option value="member" {{ old('category', 'member') === 'member' ? 'selected' : '' }}>Member</option>
