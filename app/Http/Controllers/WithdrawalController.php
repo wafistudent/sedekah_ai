@@ -140,7 +140,7 @@ class WithdrawalController extends Controller
                 member: $withdrawal->user,
                 withdrawal: $withdrawal,
                 admin: auth()->user(),
-                reason: 'Tidak ada alasan' // Default reason - can be extended later
+                reason: 'Alasan tidak disebutkan' // Default reason if not provided
             ));
 
             return redirect()->back()

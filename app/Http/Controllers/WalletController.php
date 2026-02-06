@@ -96,6 +96,8 @@ class WalletController extends Controller
 
         try {
             // Create withdrawal request
+            // Note: bank_account stores formatted string for display purposes
+            // The actual account details are in user's dana_name and dana_number fields
             $withdrawal = WithdrawalRequest::create([
                 'user_id' => $user->id,
                 'amount' => $amount,
@@ -104,7 +106,7 @@ class WalletController extends Controller
                 'requested_at' => now(),
             ]);
 
-            // Fire WithdrawalRequested event
+            // Fire WithdrawalRequested event with structured bankInfo
             event(new \App\Events\WithdrawalRequested(
                 member: $user,
                 withdrawal: $withdrawal,
