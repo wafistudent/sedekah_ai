@@ -34,17 +34,25 @@ class PinService
      */
     protected CommissionService $commissionService;
 
+
+    /**
+     * @var WhatsappService
+     */
+    protected WhatsappService $whatsappService;
+
     /**
      * Constructor
      */
     public function __construct(
         NetworkService $networkService,
         WalletService $walletService,
-        CommissionService $commissionService
+        CommissionService $commissionService,
+        WhatsappService $whatsappService
     ) {
         $this->networkService = $networkService;
         $this->walletService = $walletService;
         $this->commissionService = $commissionService;
+        $this->whatsappService = $whatsappService;
     }
 
     /**
@@ -317,6 +325,9 @@ class PinService
                 // Calculate and distribute commission
                 $this->commissionService->calculateCommission($newUser->id);
             }
+
+            // Send welcome message
+            $this->whatsappService->sendWelcomeMessage($newMemberData);
 
             return $newUser;
         });

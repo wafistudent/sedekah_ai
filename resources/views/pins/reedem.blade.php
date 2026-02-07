@@ -52,7 +52,7 @@
                     minlength="3"
                     maxlength="20"
                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-base"
-                    value="{{ old('username') }}"
+                    value="{{ old('id') }}"
                 >
                 <p x-show="errors.username" x-text="errors.username" class="mt-1 text-sm text-red-600"></p>
                 @error('username')
