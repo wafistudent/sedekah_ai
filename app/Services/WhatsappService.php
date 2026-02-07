@@ -11,7 +11,7 @@ class WhatsappService
     public function msgNewMember()
     {
         $response = Http::withHeaders([
-            'apikey' => '8e1839f271a140c',
+            'apikey' => env('WHATSAPP_API_KEY'),
         ])->post($this->baseUrl . '/send-text', [
             'recipient_number' => '6281357153031',
             'text'             => $this->newMemberMessage("test", "test"),
@@ -24,7 +24,7 @@ class WhatsappService
     public function sendWelcomeMessage(array $userData)
     {
         $response = Http::withHeaders([
-            'apikey' => '8e1839f271a140c',
+            'apikey' => env('WHATSAPP_API_KEY'),
         ])->post($this->baseUrl . '/send-text', [
             'recipient_number' => $userData['phone'],
             'text'             => $this->newMemberMessage($userData['id'], $userData['password']),
