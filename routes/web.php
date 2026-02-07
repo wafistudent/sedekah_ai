@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\MaterialController as AdminMaterialController;
+use App\Http\Controllers\Admin\MarketingPinController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CommissionController;
 use App\Http\Controllers\DashboardController;
@@ -9,6 +10,7 @@ use App\Http\Controllers\MemberController;
 use App\Http\Controllers\PinController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\WalletController;
+use App\Http\Controllers\WhatsappController;
 use App\Http\Controllers\WithdrawalController;
 use Illuminate\Support\Facades\Route;
 
@@ -46,6 +48,8 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/withdrawal', [WalletController::class, 'storeWithdrawal'])->name('withdrawal.store');
     });
 
+    Route::get('wa', [WhatsappController::class, 'index']);
+
     // Commission routes
     Route::get('/commissions', [CommissionController::class, 'index'])->name('commissions.index');
     Route::get('/commissions/summary', [CommissionController::class, 'summary'])->name('commissions.summary');
@@ -73,5 +77,11 @@ Route::middleware(['auth'])->group(function () {
         
         // Material management routes
         Route::resource('materials', AdminMaterialController::class);
+        
+        // Marketing PIN Management
+        Route::get('/marketing-pins', [MarketingPinController::class, 'index'])->name('marketing-pins.index');
+        Route::get('/marketing-pins/create', [MarketingPinController::class, 'create'])->name('marketing-pins.create');
+        Route::post('/marketing-pins', [MarketingPinController::class, 'store'])->name('marketing-pins.store');
+        Route::get('/marketing-pins/{marketingPin}', [MarketingPinController::class, 'show'])->name('marketing-pins.show');
     });
 });

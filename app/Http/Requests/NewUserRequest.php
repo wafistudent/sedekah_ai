@@ -24,12 +24,25 @@ class NewUserRequest extends FormRequest
         return [
             'username' => 'required|string|min:3|max:20|unique:users,id',
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
+            'email' => 'required|email',
             'phone' => 'nullable|string|max:20',
             'password' => 'required|string|min:8|confirmed',
             'dana_name' => 'required|string|max:255',
             'dana_number' => 'required|string|max:20',
             'upline_id' => 'required|exists:users,id',
+            'marketing_pin_code' => 'nullable|string',
+        ];
+    }
+
+    /**
+     * Get custom messages for validator errors.
+     *
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'marketing_pin_code.size' => 'Kode Marketing PIN harus 8 karakter.',
         ];
     }
 }

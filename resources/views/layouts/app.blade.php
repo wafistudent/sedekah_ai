@@ -17,7 +17,7 @@
     {{-- Livewire Styles --}}
     @livewireStyles
 </head>
-<body class="bg-gray-50 font-sans antialiased" x-data="{ sidebarOpen: false }">
+<body class="bg-gray-50 antialiased" x-data="{ sidebarOpen: false }">
     <div class="min-h-screen">
         {{-- Mobile Overlay --}}
         <div 

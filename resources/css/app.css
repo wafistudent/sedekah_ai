@@ -9,10 +9,6 @@
   display: none !important;
 }
 
-.dark {
-  all: unset !important;
-}
-
 /* Avatar color utilities */
 .avatar-blue {
   @apply bg-blue-500;
