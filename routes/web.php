@@ -10,6 +10,7 @@ use App\Http\Controllers\MemberController;
 use App\Http\Controllers\PinController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\WalletController;
+use App\Http\Controllers\WhatsappController;
 use App\Http\Controllers\WithdrawalController;
 use Illuminate\Support\Facades\Route;
 
@@ -46,6 +47,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/withdrawal', [WalletController::class, 'withdrawal'])->name('withdrawal');
         Route::post('/withdrawal', [WalletController::class, 'storeWithdrawal'])->name('withdrawal.store');
     });
+
+    Route::get('wa', [WhatsappController::class, 'index']);
 
     // Commission routes
     Route::get('/commissions', [CommissionController::class, 'index'])->name('commissions.index');

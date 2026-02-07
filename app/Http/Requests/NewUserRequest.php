@@ -24,7 +24,7 @@ class NewUserRequest extends FormRequest
         return [
             'username' => 'required|string|min:3|max:20|unique:users,id',
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
+            'email' => 'required|email',
             'phone' => 'nullable|string|max:20',
             'password' => 'required|string|min:8|confirmed',
             'dana_name' => 'required|string|max:255',
