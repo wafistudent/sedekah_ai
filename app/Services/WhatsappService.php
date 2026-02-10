@@ -11,7 +11,7 @@ class WhatsappService
     public function msgNewMember()
     {
         $response = Http::withHeaders([
-            'apikey' => env('WHATSAPP_API_KEY'),
+            'apikey' => env("WHATSAPP_API_KEY"),
         ])->post($this->baseUrl . '/send-text', [
             'recipient_number' => '6281357153031',
             'text'             => $this->newMemberMessage("test", "test"),
@@ -21,10 +21,34 @@ class WhatsappService
         return $response->status();
     }
 
+    public function sendMarketingPins(array $pins)
+    {
+        $user = User::find($pins[0]->designated_member_id);
+
+        foreach ($pins as $pin) {
+            logger($pin->code);
+        }
+
+        $response = Http::withHeaders([
+            'apikey' => env("WHATSAPP_API_KEY"),
+        ])->post($this->baseUrl . '/send-text', [
+            'recipient_number' => $user->phone,
+            'text'             => $this->pinMarketing($pins),
+            'is_mode_safe'     => false,
+        ]);
+
+        WhatsappLog::create([
+            'member_id' => $user->id,
+            'phone'     => $user->phone,
+            'message'   => $this->pinMarketing($pins),
+            'status'    => (int) $response->status(),
+        ]);
+    }
+
     public function sendWelcomeMessage(array $userData)
     {
         $response = Http::withHeaders([
-            'apikey' => env('WHATSAPP_API_KEY'),
+            'apikey' => env("WHATSAPP_API_KEY"),
         ])->post($this->baseUrl . '/send-text', [
             'recipient_number' => $userData['phone'],
             'text'             => $this->newMemberMessage($userData['id'], $userData['password']),
@@ -78,4 +102,22 @@ Keuntungan lainnya, Anda tidak perlu mengelola produk, layanan, atau inventaris 
 Semua proses pelacakan, pembayaran, dan dukungan sudah disediakan, sehingga Anda bisa fokus untuk meningkatkan penghasilan tanpa kerumitan. Jangan lewatkan kesempatan untuk menghasilkan uang secara fleksibel dari kenyamanan rumah Anda.
 Bergabung sekarang dan mulailah menghasilkan!";
     }
+
+    public function pinMarketing(array $pins): string
+    {
+        $codes = collect($pins)
+            ->pluck('code')
+            ->implode("\n");
+
+        return "Berikut Aktivasi Pin yang dapat Anda gunakan :
+
+---
+{$codes}
+---
+
+Pin hanya berguna 1x aktivasi, apabila tidak berhasil dapat meminta ulang.
+
+Terimakasih";
+    }
+
 }
