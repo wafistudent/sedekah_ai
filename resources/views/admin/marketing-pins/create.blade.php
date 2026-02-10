@@ -61,7 +61,7 @@
         {{-- Designated Member --}}
         <div>
             <label for="designated_member_id" class="block text-sm font-medium text-gray-700">
-                Designated Member
+                Dikirim untuk Member:
             </label>
             <select 
                 name="designated_member_id" 
