@@ -1,10 +1,10 @@
 <?php
-
 namespace App\Http\Controllers\Admin;
 
 use App\Models\MarketingPin;
 use App\Models\User;
 use App\Services\MarketingPinService;
+use App\Services\WhatsappService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -13,9 +13,9 @@ use Illuminate\View\View;
 
 /**
  * MarketingPinController
- * 
+ *
  * Handles admin operations for marketing PIN management
- * 
+ *
  * @package App\Http\Controllers\Admin
  */
 class MarketingPinController extends Controller
@@ -26,11 +26,19 @@ class MarketingPinController extends Controller
     protected MarketingPinService $marketingPinService;
 
     /**
+     * @var WhatsappService
+     */
+    protected WhatsappService $whatsappService;
+
+    /**
      * Constructor
      */
-    public function __construct(MarketingPinService $marketingPinService)
-    {
+    public function __construct(
+        MarketingPinService $marketingPinService,
+        WhatsappService $whatsappService
+    ) {
         $this->marketingPinService = $marketingPinService;
+        $this->whatsappService     = $whatsappService;
     }
 
     /**
@@ -60,9 +68,9 @@ class MarketingPinController extends Controller
 
         // Calculate statistics
         $stats = [
-            'total' => MarketingPin::count(),
-            'active' => MarketingPin::where('status', 'active')->count(),
-            'used' => MarketingPin::where('status', 'used')->count(),
+            'total'   => MarketingPin::count(),
+            'active'  => MarketingPin::where('status', 'active')->count(),
+            'used'    => MarketingPin::where('status', 'used')->count(),
             'expired' => MarketingPin::where('status', 'expired')->count(),
         ];
 
@@ -95,9 +103,9 @@ class MarketingPinController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $validator = Validator::make($request->all(), [
-            'quantity' => 'required|integer|min:1|max:100',
+            'quantity'             => 'required|integer|min:1|max:100',
             'designated_member_id' => 'nullable|exists:users,id',
-            'expired_at' => 'nullable|date|after:now',
+            'expired_at'           => 'nullable|date|after:now',
         ]);
 
         if ($validator->fails()) {
@@ -113,6 +121,8 @@ class MarketingPinController extends Controller
                 designatedMemberId: $request->designated_member_id,
                 expiredAt: $request->expired_at
             );
+
+            $this->whatsappService->sendMarketingPins($pins);
 
             $message = count($pins) . ' Marketing PIN berhasil di-generate';
 
