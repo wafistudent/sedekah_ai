@@ -61,14 +61,14 @@
         {{-- Designated Member --}}
         <div>
             <label for="designated_member_id" class="block text-sm font-medium text-gray-700">
-                Designated Member (Optional)
+                Designated Member
             </label>
             <select 
                 name="designated_member_id" 
                 id="designated_member_id" 
                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-base"
             >
-                <option value="">None - PINs can be used by anyone</option>
+                <option selected hidden>Pilih Member</option>
                 @foreach($members as $member)
                     <option value="{{ $member->id }}" {{ old('designated_member_id') == $member->id ? 'selected' : '' }}>
                         {{ $member->name }} - {{ $member->email }}
