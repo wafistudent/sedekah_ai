@@ -101,6 +101,7 @@ class WalletController extends Controller
                 'amount' => $amount,
                 'dana_name' => $user->dana_name,
                 'dana_number' => $user->dana_number,
+                'requested_at' => now(),
                 'status' => 'pending',
             ]);
 
