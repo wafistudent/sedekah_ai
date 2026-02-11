@@ -31,7 +31,7 @@
                                     <x-member-avatar :member="$withdrawal->user" size="sm" />
                                     <div class="ml-3">
                                         <p class="text-sm font-medium text-gray-900">{{ $withdrawal->user->name }}</p>
-                                        <p class="text-xs text-gray-500">@{{ $withdrawal->user->id }}</p>
+                                        <p class="text-xs text-gray-500">{{ $withdrawal->user->id }}</p>
                                     </div>
                                 </div>
                             </td>
